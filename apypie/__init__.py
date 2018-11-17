@@ -13,7 +13,7 @@ class Api:
 
     @property
     def resources(self):
-        return self.apidoc['docs']['resources'].keys()
+        return sorted(self.apidoc['docs']['resources'].keys())
 
     def resource(self, name):
         if name in self.resources:
@@ -25,14 +25,14 @@ class Resource:
     """
     Apipie Resource
     """
-    
+
     def __init__(self, api, name):
         self.api = api
         self.name = name
 
     @property
     def actions(self):
-        return [method['name'] for method in self.api.apidoc['docs']['resources'][self.name]['methods']]
+        return sorted([method['name'] for method in self.api.apidoc['docs']['resources'][self.name]['methods']])
 
     def action(self, name):
         if name in self.actions:
@@ -44,7 +44,7 @@ class Action:
     """
     Apipie Action
     """
-    
+
     def __init__(self, name, resource, api):
         self.name = name
         self.resource = resource

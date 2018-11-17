@@ -10,7 +10,7 @@ def test_init(api):
     assert api.apidoc
 
 def test_resources(api):
-    expected = ['posts', 'users', 'comments']
+    expected = sorted(['posts', 'users', 'comments'])
     assert expected == api.resources
 
 def test_resource_existing(api):
@@ -18,12 +18,12 @@ def test_resource_existing(api):
     assert 'users' == resource.name
 
 def test_resource_missing(api):
-    with pytest.raises(IOError) as excinfo:
+    with pytest.raises(IOError):
         api.resource('missing')
 
 def test_resource_actions(api):
     resource = api.resource('users')
-    expected = ['index', 'show', 'create', 'update', 'destroy', 'create_unnested']
+    expected = sorted(['index', 'show', 'create', 'update', 'destroy', 'create_unnested'])
     assert expected == resource.actions
 
 def test_resource_action(api):
@@ -32,7 +32,7 @@ def test_resource_action(api):
     assert 'show' == action.name
 
 def test_resource_action_missing(api):
-    with pytest.raises(IOError) as excinfo:
+    with pytest.raises(IOError):
         api.resource('users').action('missing')
 
 def test_action_apidoc(api):
