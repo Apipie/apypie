@@ -34,3 +34,30 @@ def test_resource_action(api):
 def test_resource_action_missing(api):
     with pytest.raises(IOError) as excinfo:
         api.resource('users').action('missing')
+
+def test_action_apidoc(api):
+    resource = api.resource('users')
+    action = resource.action('show')
+    assert action.apidoc
+
+def test_action_routes(api):
+    resource = api.resource('users')
+    action = resource.action('show')
+    assert action.routes
+
+def test_action_route(api):
+    resource = api.resource('users')
+    action = resource.action('show')
+    route = action.routes[0]
+    assert '/users/:id' == route.path
+    assert 'get' == route.method
+
+def test_action_params(api):
+    resource = api.resource('users')
+    action = resource.action('create')
+    assert action.params
+
+def test_action_examples(api):
+    resource = api.resource('users')
+    action = resource.action('index')
+    assert action.examples
