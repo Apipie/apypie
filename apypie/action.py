@@ -2,6 +2,7 @@ from __future__ import print_function, absolute_import
 
 from apypie.route import Route
 from apypie.example import Example
+from apypie.param import Param
 
 class Action:
     """
@@ -24,7 +25,7 @@ class Action:
 
     @property
     def params(self):
-        return [param for param in self.apidoc['params']]
+        return [Param(**param) for param in self.apidoc['params']]
 
     @property
     def examples(self):
