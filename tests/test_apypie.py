@@ -1,6 +1,3 @@
-import pytest
-import apypie
-
 def test_init(api):
     assert api
     assert api.apidoc
@@ -9,23 +6,8 @@ def test_resources(api):
     expected = sorted(['posts', 'users', 'comments'])
     assert expected == api.resources
 
-def test_resource_existing(resource):
-    assert 'users' == resource.name
-
-def test_resource_missing(api):
-    with pytest.raises(IOError):
-        api.resource('missing')
-
-def test_resource_actions(resource):
-    expected = sorted(['index', 'show', 'create', 'update', 'destroy', 'create_unnested'])
-    assert expected == resource.actions
-
 def test_resource_action(action):
     assert 'show' == action.name
-
-def test_resource_action_missing(resource):
-    with pytest.raises(IOError):
-        resource.action('missing')
 
 def test_action_apidoc(action):
     assert action.apidoc

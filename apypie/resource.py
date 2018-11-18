@@ -16,7 +16,10 @@ class Resource:
         return sorted([method['name'] for method in self.api.apidoc['docs']['resources'][self.name]['methods']])
 
     def action(self, name):
-        if name in self.actions:
+        if self.has_action(name):
             return Action(name, self.name, self.api)
         else:
             raise IOError
+
+    def has_action(self, name):
+        return name in self.actions
