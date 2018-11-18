@@ -2,6 +2,7 @@ from __future__ import print_function, absolute_import
 
 from apypie.action import Action
 
+
 class Resource:
     """
     Apipie Resource

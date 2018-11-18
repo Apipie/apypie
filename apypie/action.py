@@ -4,6 +4,7 @@ from apypie.route import Route
 from apypie.example import Example
 from apypie.param import Param
 
+
 class Action:
     """
     Apipie Action

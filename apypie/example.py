@@ -5,7 +5,7 @@ EXAMPLE_PARSER = re.compile(r'(\w+)\s+([^\n]*)\n?(.*)?\n(\d+)\n(.*)', re.DOTALL)
 
 
 class Example:
-    
+
     def __init__(self, http_method, path, args, status, response):
         self.http_method = http_method
         self.path = path

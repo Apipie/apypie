@@ -2,6 +2,7 @@ import re
 
 HTML_STRIP = re.compile(r'<\/?[^>]+?>')
 
+
 class Param:
 
     def __init__(self, **kwargs):

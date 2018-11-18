@@ -4,6 +4,7 @@ import json
 
 from apypie.resource import Resource
 
+
 class Api:
     """
     Apipie API bindings
