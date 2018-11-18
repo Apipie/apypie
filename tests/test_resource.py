@@ -18,17 +18,17 @@ def test_resource_action_missing(resource):
 def test_resource_action_type(resource):
     assert isinstance(resource.action('index'), apypie.Action)
 
-  # ~ it "should allow user to call the action" do
-    # ~ params = { :a => 1 }
-    # ~ headers = { :content_type => 'application/json' }
-    # ~ ApipieBindings::API.any_instance.expects(:call).with(:users, :index, params, headers, {})
-    # ~ resource.call(:index, params, headers)
-  # ~ end
+def test_resource_call_action(resource, mocker):
+    params = { }
+    headers = { 'content-type': 'application/json' }
+    mocker.patch('apypie.Api.call', autospec=True)
+    resource.call('index', params, headers)
+    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {})
 
-  # ~ it "should allow user to call the action with minimal params" do
-    # ~ ApipieBindings::API.any_instance.expects(:call).with(:users, :index, {}, {}, {})
-    # ~ resource.call(:index)
-  # ~ end
+def test_resource_call_action_minimal(resource, mocker):
+    mocker.patch('apypie.Api.call', autospec=True)
+    resource.call('index')
+    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', {}, {}, {})
 
 def test_resource_existing(resource):
     assert 'users' == resource.name

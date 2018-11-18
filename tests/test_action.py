@@ -29,3 +29,9 @@ def test_action_example(resource):
     assert 200 == example.status
     assert '[ {"user":{"name":"John Doe" }} ]' in example.response
 
+def test_action_call(resource, mocker):
+    params = { }
+    headers = { 'content-type': 'application/json' }
+    mocker.patch('apypie.Api.call', autospec=True)
+    resource.action('index').call(params, headers)
+    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {})

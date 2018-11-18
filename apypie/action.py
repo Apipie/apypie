@@ -30,3 +30,13 @@ class Action:
     @property
     def examples(self):
         return [Example.parse(example) for example in self.apidoc['examples']]
+
+    def call(self, params={}, headers={}, options={}):
+        self.api.call(self.resource, self.name, params, headers, options)
+
+    def find_route(self, params={}):
+        sorted_routes = sorted(self.routes, key=lambda route: [-1 * len(route.params_in_path), route.path])
+        for route in sorted_routes:
+            if sorted(route.params_in_path) == sorted(params.keys()):
+                return route
+        return sorted_routes[-1]
