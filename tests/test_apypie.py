@@ -1,18 +1,6 @@
 import pytest
 import apypie
 
-@pytest.fixture
-def api(fixture_dir):
-    return apypie.Api((fixture_dir / 'dummy.json').strpath)
-
-@pytest.fixture
-def resource(api):
-    return api.resource('users')
-
-@pytest.fixture
-def action(resource):
-    return resource.action('show')
-
 def test_init(api):
     assert api
     assert api.apidoc
