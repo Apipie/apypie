@@ -1,6 +1,7 @@
 from __future__ import print_function, absolute_import
 
 from apypie.route import Route
+from apypie.example import Example
 
 class Action:
     """
@@ -27,4 +28,4 @@ class Action:
 
     @property
     def examples(self):
-        return [example for example in self.apidoc['examples']]
+        return [Example.parse(example) for example in self.apidoc['examples']]

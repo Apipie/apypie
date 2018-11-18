@@ -57,3 +57,12 @@ def test_action_params(resource):
 def test_action_examples(resource):
     action = resource.action('index')
     assert action.examples
+
+def test_action_example(resource):
+    action = resource.action('index')
+    example = action.examples[0]
+    assert 'GET' == example.http_method
+    assert '/users' == example.path
+    assert '' == example.args
+    assert 200 == example.status
+    assert '[ {"user":{"name":"John Doe" }} ]' in example.response
