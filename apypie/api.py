@@ -13,7 +13,6 @@ class Api:
     def __init__(self, apifile):
         with open(apifile, 'r') as f:
             self.apidoc = json.load(f)
-            self.options = {'skip_validation': True}
 
     @property
     def resources(self):
@@ -28,7 +27,7 @@ class Api:
     def call(self, resource_name, action_name, params={}, headers={}, options={}):
         resource = Resource(self, resource_name)
         action = resource.action(action_name)
-        if not self.options['skip_validation']:
+        if not options.get('skip_validation', False):
             action.validate(params)
 
         self.call_action(action, params, headers, options)
@@ -36,8 +35,11 @@ class Api:
     def call_action(self, action, params={}, headers={}, options={}):
         route = action.find_route(params)
         get_params = dict((key, value) for key, value in params.items() if key not in route.params_in_path)
-        return (
+        return self.http_call(
             route.method,
             route.path_with_params(params),
             get_params,
             headers, options)
+
+    def http_call(self, http_method, path, params=None, headers=None, options=None):
+        pass
