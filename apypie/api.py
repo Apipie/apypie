@@ -1,6 +1,11 @@
 from __future__ import print_function, absolute_import
 
 import json
+try:
+    from urlparse import urljoin
+except ImportError:
+    from urllib.parse import urljoin
+import requests
 
 from apypie.resource import Resource
 
@@ -30,7 +35,7 @@ class Api:
         if not options.get('skip_validation', False):
             action.validate(params)
 
-        self.call_action(action, params, headers, options)
+        return self.call_action(action, params, headers, options)
 
     def call_action(self, action, params={}, headers={}, options={}):
         route = action.find_route(params)
@@ -42,4 +47,10 @@ class Api:
             headers, options)
 
     def http_call(self, http_method, path, params=None, headers=None, options=None):
-        pass
+        full_path = urljoin('https://example.com', path)
+        kwargs = {'headers': headers or {}}
+        if http_method == 'get':
+            kwargs['params'] = params or {}
+        else:
+            kwargs['data'] = params or {}
+        return requests.request(http_method, full_path, **kwargs)
