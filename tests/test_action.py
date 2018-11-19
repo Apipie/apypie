@@ -1,4 +1,5 @@
 import apypie
+import pytest
 
 
 def test_resource_action(action):
@@ -64,3 +65,49 @@ def test_action_find_route_longest_ignoring_none(api):
     action = api.resource('comments').action('archive')
     params = {'id': 1, 'user_id': None}
     assert '/archive/comments/:id' == action.find_route(params).path
+
+
+def test_action_validate_missing_required_params(resource):
+    action = resource.action('create')
+    with pytest.raises(KeyError):
+        action.validate({'user': {'vip': True}})
+
+
+def test_action_validate_missing_nested_required_params(resource):
+    action = resource.action('create')
+    with pytest.raises(KeyError):
+        action.validate({'user': {'name': 'John Doe', 'address': {'street': 'K JZD'}}})
+
+
+def test_action_validate_missing_nested_required_params_array(resource):
+    action = resource.action('create')
+    with pytest.raises(KeyError):
+        action.validate({'user': {'name': 'John Doe', 'contacts': [{'kind': 'email'}]}})
+
+
+def test_action_validate_missing_nested_invalid_params(resource):
+    action = resource.action('create')
+    with pytest.raises(ValueError):
+        action.validate({'user': {'name': 'John Doe', 'contacts': [1, 2]}})
+
+
+def test_action_validate_minimal_correct_params(resource):
+    resource.action('create').validate({'user': {'name': 'John Doe'}})
+    resource.action('create_unnested').validate({'name': 'John Doe'})
+
+
+def test_action_validate_full_correct_params(resource):
+    action = resource.action('create')
+    params = {'user': {
+        'name': 'John Doe',
+        'vip': True,
+        'address': {
+            'city': 'Ankh-Morpork',
+            'street': 'Audit Alley'
+        },
+        'contacts': [
+            {'contact': 'john@doe.org', 'kind': 'email'},
+            {'contact': '123456', 'kind': 'pobox'}
+        ]
+    }}
+    action.validate(params)
