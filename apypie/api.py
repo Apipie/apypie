@@ -53,4 +53,6 @@ class Api:
             kwargs['params'] = params or {}
         else:
             kwargs['data'] = params or {}
-        return requests.request(http_method, full_path, **kwargs)
+        request = requests.request(http_method, full_path, **kwargs)
+        request.raise_for_status()
+        return request.json()
