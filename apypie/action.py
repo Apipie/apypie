@@ -35,7 +35,11 @@ class Action:
     def call(self, params={}, headers={}, options={}):
         self.api.call(self.resource, self.name, params, headers, options)
 
-    def find_route(self, params={}):
+    def find_route(self, params=None):
+        if params is not None:
+            params = dict((k, v) for k, v in params.items() if v is not None)
+        else:
+            params = {}
         sorted_routes = sorted(self.routes, key=lambda route: [-1 * len(route.params_in_path), route.path])
         for route in sorted_routes:
             if sorted(route.params_in_path) == sorted(params.keys()):

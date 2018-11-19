@@ -1,3 +1,6 @@
+import apypie
+
+
 def test_resource_action(action):
     assert 'show' == action.name
 
@@ -8,6 +11,7 @@ def test_action_apidoc(action):
 
 def test_action_routes(action):
     assert action.routes
+    assert isinstance(action.routes[0], apypie.Route)
 
 
 def test_action_route(action):
@@ -19,6 +23,7 @@ def test_action_route(action):
 def test_action_params(resource):
     action = resource.action('create')
     assert action.params
+    assert ['user'] == [param.name for param in action.params]
 
 
 def test_action_examples(resource):
@@ -42,3 +47,20 @@ def test_action_call(resource, mocker):
     mocker.patch('apypie.Api.call', autospec=True)
     resource.action('index').call(params, headers)
     resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {})
+
+
+def test_action_find_route(resource):
+    action = resource.action('index')
+    assert '/users' == action.find_route().path
+
+
+def test_action_find_route_longest(api):
+    action = api.resource('comments').action('archive')
+    params = {'id': 1, 'user_id': 1}
+    assert '/archive/users/:user_id/comments/:id' == action.find_route(params).path
+
+
+def test_action_find_route_longest_ignoring_none(api):
+    action = api.resource('comments').action('archive')
+    params = {'id': 1, 'user_id': None}
+    assert '/archive/comments/:id' == action.find_route(params).path
