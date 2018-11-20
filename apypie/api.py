@@ -2,6 +2,7 @@ from __future__ import print_function, absolute_import
 
 import json
 import os
+import errno
 try:
     from urlparse import urljoin
 except ImportError:
@@ -9,6 +10,7 @@ except ImportError:
 import requests
 
 from apypie.resource import Resource
+from apypie.exceptions import DocLoadingError
 
 
 class Api:
@@ -26,15 +28,13 @@ class Api:
         self.username = kwargs.get('username')
         self.password = kwargs.get('password')
         self.verify_ssl = kwargs.get('verify_ssl', True)
-        apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
-        with open(apifile, 'r') as f:
-            self.apidoc = json.load(f)
         self.headers = {
             'Content-Type': 'application/json',
             'Accept': 'application/json;version={}'.format(self.api_version)
         }
         if self.language:
             self.headers['Accept-Language'] = self.language
+        self.apidoc = self.load_apidoc()
 
     @property
     def resources(self):
@@ -45,6 +45,34 @@ class Api:
             return Resource(self, name)
         else:
             raise IOError
+
+    def load_apidoc(self):
+        apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
+        try:
+            with open(apifile, 'r') as f:
+                api_doc = json.load(f)
+        except IOError:
+            api_doc = self.retrieve_apidoc(apifile)
+        return api_doc
+
+    def retrieve_apidoc(self, apifile):
+        try:
+            os.makedirs(self.apidoc_cache_dir)
+        except OSError as err:
+            if err.errno != errno.EEXIST or not os.path.isdir(self.apidoc_cache_dir):
+                raise
+        try:
+            response = self.retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
+        except Exception as e:
+            raise DocLoadingError("""Could not load data from {0}: {1}
+              - is your server down?
+              - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, e))
+        with open(apifile, 'w') as f:
+            f.write(json.dumps(response))
+        return response
+
+    def retrieve_apidoc_call(self, path):
+        return self.http_call('get', path)
 
     def call(self, resource_name, action_name, params={}, headers={}, options={}):
         resource = Resource(self, resource_name)
