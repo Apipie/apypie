@@ -33,7 +33,7 @@ class Action:
         return [Example.parse(example) for example in self.apidoc['examples']]
 
     def call(self, params={}, headers={}, options={}):
-        self.api.call(self.resource, self.name, params, headers, options)
+        return self.api.call(self.resource, self.name, params, headers, options)
 
     def find_route(self, params=None):
         params = self.filter_empty_params(params)
