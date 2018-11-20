@@ -29,6 +29,12 @@ class Api:
         apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
         with open(apifile, 'r') as f:
             self.apidoc = json.load(f)
+        self.headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json;version={}'.format(self.api_version)
+        }
+        if self.language:
+            self.headers['Accept-Language'] = self.language
 
     @property
     def resources(self):
@@ -59,7 +65,9 @@ class Api:
 
     def http_call(self, http_method, path, params=None, headers=None, options=None):
         full_path = urljoin(self.uri, path)
-        kwargs = {'headers': headers or {}}
+        full_headers = self.headers.copy()
+        full_headers.update(headers or {})
+        kwargs = {'headers': full_headers}
         if http_method == 'get':
             kwargs['params'] = params or {}
         else:
