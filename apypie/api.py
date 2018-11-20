@@ -14,6 +14,21 @@ from apypie.resource import Resource
 class Api:
     """
     Apipie API bindings
+
+    :param uri: base URL of the server
+    :param username: username to access the API
+    :param password: username to access the API
+    :param api_version: version of the API. Defaults to `1`
+    :param language: prefered locale for the API description
+    :param apidoc_cache_base_dir: base directory for building apidoc_cache_dir. Defaults to `~/.cache/apipie_bindings`.
+    :param apidoc_cache_dir: where to cache the JSON description of the API. Defaults to `apidoc_cache_base_dir/<URI>`.
+    :param apidoc_cache_name: name of the cache file. If there is cache in the `apidoc_cache_dir`, it is used. Defaults to `default`.
+    :param verify_ssl: should the SSL certificate be verified. Defaults to `True`.
+
+    Usage::
+
+      >>> import apypie
+      >>> api = apypie.Api(uri='https://api.example.com', username='admin', password='changeme')
     """
 
     def __init__(self, **kwargs):
@@ -38,15 +53,52 @@ class Api:
 
     @property
     def resources(self):
+        """List of available resources.
+
+        Usage::
+
+            >>> api.resources
+            ['comments', 'users']
+        """
         return sorted(self.apidoc['docs']['resources'].keys())
 
     def resource(self, name):
+        """
+        Get a resource.
+
+        :param name: the name of the resource to load
+        :return: :class:`Resource <Resource>` object
+        :rtype: apypie.Resource
+
+        Usage::
+
+            >>> api.resource('users')
+        """
         if name in self.resources:
             return Resource(self, name)
         else:
             raise IOError
 
     def call(self, resource_name, action_name, params={}, headers={}, options={}):
+        """
+        Call an action in the API.
+
+        It finds most fitting route based on given parameters
+        with other attributes necessary to do an API call.
+
+        :param resource_name: name of the resource
+        :param action_name: action_name name of the action
+        :param params: Dict of parameters to be send in the request
+        :param headers: Dict of headers to be send in the request
+        :param options: Dict of options to influence the how the call is processed
+           * `skip_validation` (Bool) *false* - skip validation of parameters
+        :return: :class:`dict` object
+        :rtype: dict
+
+        Usage::
+
+            >>> api.call('users', 'show', {'id': 1})
+        """
         resource = Resource(self, resource_name)
         action = resource.action(action_name)
         if not options.get('skip_validation', False):
