@@ -10,7 +10,7 @@ def fixture_dir():
 
 @pytest.fixture
 def api(fixture_dir):
-    return apypie.Api((fixture_dir / 'dummy.json').strpath)
+    return apypie.Api(uri='https://api.example.com', apidoc_cache_dir=fixture_dir.strpath, apidoc_cache_name='dummy')
 
 
 @pytest.fixture

@@ -1,6 +1,7 @@
 from __future__ import print_function, absolute_import
 
 import json
+import os
 try:
     from urlparse import urljoin
 except ImportError:
@@ -15,7 +16,14 @@ class Api:
     Apipie API bindings
     """
 
-    def __init__(self, apifile):
+    def __init__(self, **kwargs):
+        self.uri = kwargs.get('uri')
+        self.api_version = kwargs.get('api_version', 1)
+        self.language = kwargs.get('language')
+        apidoc_cache_base_dir = kwargs.get('apidoc_cache_base_dir', os.path.join(os.path.expanduser('~/.cache'), 'apypie'))
+        self.apidoc_cache_dir = kwargs.get('apidoc_cache_dir', os.path.join(apidoc_cache_base_dir, self.uri.replace(':', '_').replace('/', '_'), 'v{}'.format(self.api_version)))
+        self.apidoc_cache_name = kwargs.get('apidoc_cache_name', 'default')
+        apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
         with open(apifile, 'r') as f:
             self.apidoc = json.load(f)
 
@@ -47,7 +55,7 @@ class Api:
             headers, options)
 
     def http_call(self, http_method, path, params=None, headers=None, options=None):
-        full_path = urljoin('https://example.com', path)
+        full_path = urljoin(self.uri, path)
         kwargs = {'headers': headers or {}}
         if http_method == 'get':
             kwargs['params'] = params or {}
