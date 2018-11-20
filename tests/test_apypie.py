@@ -31,3 +31,24 @@ def test_call_method_and_fill_params(api, mocker):
     mocker.patch('apypie.Api.http_call', autospec=True)
     api.call('users', 'show', params, headers)
     api.http_call.assert_called_once_with(api, 'get', '/users/1', {}, headers, {})
+
+
+def test_http_call_get(api, requests_mock):
+    requests_mock.get('https://example.com/', text='{}')
+    api.http_call('get', '/')
+
+
+def test_http_call_get_with_params(api, requests_mock):
+    requests_mock.get('https://example.com/?test=all+the+things', text='{}')
+    api.http_call('get', '/', {'test': 'all the things'})
+
+
+def test_http_call_post(api, requests_mock):
+    requests_mock.post('https://example.com/', text='{}')
+    api.http_call('post', '/')
+
+
+def test_http_call_post_with_params(api, requests_mock):
+    params = {'test': 'all the things'}
+    requests_mock.post('https://example.com/', text='{}')
+    api.http_call('post', '/', params)
