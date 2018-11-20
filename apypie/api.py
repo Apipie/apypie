@@ -25,6 +25,7 @@ class Api:
         self.apidoc_cache_name = kwargs.get('apidoc_cache_name', 'default')
         self.username = kwargs.get('username')
         self.password = kwargs.get('password')
+        self.verify_ssl = kwargs.get('verify_ssl', True)
         apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
         with open(apifile, 'r') as f:
             self.apidoc = json.load(f)
@@ -65,6 +66,7 @@ class Api:
             kwargs['data'] = params or {}
         if self.username and self.password:
             kwargs['auth'] = (self.username, self.password)
+        kwargs['verify'] = self.verify_ssl
         request = requests.request(http_method, full_path, **kwargs)
         request.raise_for_status()
         return request.json()
