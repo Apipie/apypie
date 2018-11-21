@@ -4,6 +4,9 @@ HTML_STRIP = re.compile(r'<\/?[^>]+?>')
 
 
 class Param:
+    """
+    Apipie Param
+    """
 
     def __init__(self, **kwargs):
         self.allow_nil = kwargs.get('allow_nil')
