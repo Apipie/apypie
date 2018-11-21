@@ -49,7 +49,7 @@ class Api:
         }
         if self.language:
             self.headers['Accept-Language'] = self.language
-        self.apidoc = self.load_apidoc()
+        self.apidoc = self._load_apidoc()
 
     @property
     def resources(self):
@@ -79,23 +79,23 @@ class Api:
         else:
             raise IOError
 
-    def load_apidoc(self):
+    def _load_apidoc(self):
         apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
         try:
             with open(apifile, 'r') as f:
                 api_doc = json.load(f)
         except IOError:
-            api_doc = self.retrieve_apidoc(apifile)
+            api_doc = self._retrieve_apidoc(apifile)
         return api_doc
 
-    def retrieve_apidoc(self, apifile):
+    def _retrieve_apidoc(self, apifile):
         try:
             os.makedirs(self.apidoc_cache_dir)
         except OSError as err:
             if err.errno != errno.EEXIST or not os.path.isdir(self.apidoc_cache_dir):
                 raise
         try:
-            response = self.retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
+            response = self._retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
         except Exception as e:
             raise DocLoadingError("""Could not load data from {0}: {1}
               - is your server down?
@@ -104,7 +104,7 @@ class Api:
             f.write(json.dumps(response))
         return response
 
-    def retrieve_apidoc_call(self, path):
+    def _retrieve_apidoc_call(self, path):
         return self.http_call('get', path)
 
     def call(self, resource_name, action_name, params={}, headers={}, options={}):
@@ -132,9 +132,9 @@ class Api:
         if not options.get('skip_validation', False):
             action.validate(params)
 
-        return self.call_action(action, params, headers, options)
+        return self._call_action(action, params, headers, options)
 
-    def call_action(self, action, params={}, headers={}, options={}):
+    def _call_action(self, action, params={}, headers={}, options={}):
         route = action.find_route(params)
         get_params = dict((key, value) for key, value in params.items() if key not in route.params_in_path)
         return self.http_call(
