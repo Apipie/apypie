@@ -41,8 +41,7 @@ def test_http_call_get(api, requests_mock):
 def test_http_call_get_headers(api, requests_mock):
     headers = {'X-Apypie-Test': 'Awesome'}
     expected_headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json;version=1'
+        'Accept': 'application/json;version=1',
     }
     expected_headers.update(headers)
     requests_mock.get('https://api.example.com/', request_headers=expected_headers, text='{}')
@@ -60,6 +59,10 @@ def test_http_call_post(api, requests_mock):
 
 
 def test_http_call_post_with_params(api, requests_mock):
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Content-Type': 'application/json',
+    }
     params = {'test': 'all the things'}
-    requests_mock.post('https://api.example.com/', text='{}')
+    requests_mock.post('https://api.example.com/', text='{}', headers=expected_headers)
     api.http_call('post', '/', params)
