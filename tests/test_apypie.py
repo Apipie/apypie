@@ -1,6 +1,33 @@
+# pylint: disable=invalid-name,missing-docstring,protected-access
+import pytest
+
+import apypie
+
+
 def test_init(api):
     assert api
     assert api.apidoc
+
+
+@pytest.mark.parametrize('username,password,expected', [
+    (None, None, None),
+    ('user', None, None),
+    (None, 'pass', None),
+    ('user', 'pass', ('user', 'pass')),
+])
+def test_init_auth(apidoc_cache_dir, username, password, expected):
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     username=username, password=password)
+
+    assert api._session.auth == expected
+
+
+def test_init_language(apidoc_cache_dir):
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     language='tlh')
+
+    assert api.language == 'tlh'
+    assert api._session.headers['Accept-Language'] == 'tlh'
 
 
 def test_resources(api):
@@ -45,6 +72,46 @@ def test_http_call_get_headers(api, requests_mock):
     }
     expected_headers.update(headers)
     requests_mock.get('https://api.example.com/', request_headers=expected_headers, text='{}')
+    api.http_call('get', '/', headers=headers)
+
+
+def test_http_call_get_headers_auth(apidoc_cache_dir, requests_mock):
+    headers = {'X-Apypie-Test': 'Awesome'}
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Authorization': 'Basic dXNlcjpwYXNz',
+    }
+    expected_headers.update(headers)
+    requests_mock.get('https://api.example.com/', request_headers=expected_headers, text='{}')
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     username='user', password='pass')
+    api.http_call('get', '/', headers=headers)
+
+
+def test_http_call_get_headers_auth_lang(apidoc_cache_dir, requests_mock):
+    headers = {'X-Apypie-Test': 'Awesome'}
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Accept-Language': 'tlh',
+        'Authorization': 'Basic dXNlcjpwYXNz',
+    }
+    expected_headers.update(headers)
+    requests_mock.get('https://api.example.com/', request_headers=expected_headers, text='{}')
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     username='user', password='pass', language='tlh')
+    api.http_call('get', '/', headers=headers)
+
+
+def test_http_call_get_headers_lang(apidoc_cache_dir, requests_mock):
+    headers = {'X-Apypie-Test': 'Awesome'}
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Accept-Language': 'tlh',
+    }
+    expected_headers.update(headers)
+    requests_mock.get('https://api.example.com/', request_headers=expected_headers, text='{}')
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     language='tlh')
     api.http_call('get', '/', headers=headers)
 
 

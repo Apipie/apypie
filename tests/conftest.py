@@ -12,6 +12,12 @@ def fixture_dir():
 
 
 @pytest.fixture
+def apidoc_cache_dir(fixture_dir, tmpdir):
+    fixture_dir.join('dummy.json').copy(tmpdir / 'default.json')
+    return tmpdir
+
+
+@pytest.fixture
 def api(fixture_dir, requests_mock, tmpdir):
     with fixture_dir.join('dummy.json').open() as read_file:
         data = json.load(read_file)
