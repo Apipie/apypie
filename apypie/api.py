@@ -40,15 +40,19 @@ class Api:
         apidoc_cache_base_dir = kwargs.get('apidoc_cache_base_dir', os.path.join(os.path.expanduser('~/.cache'), 'apypie'))
         self.apidoc_cache_dir = kwargs.get('apidoc_cache_dir', os.path.join(apidoc_cache_base_dir, self.uri.replace(':', '_').replace('/', '_'), 'v{}'.format(self.api_version)))
         self.apidoc_cache_name = kwargs.get('apidoc_cache_name', 'default')
-        self.username = kwargs.get('username')
-        self.password = kwargs.get('password')
-        self.verify_ssl = kwargs.get('verify_ssl', True)
-        self.headers = {
-            'Content-Type': 'application/json',
+
+        self._session = requests.Session()
+        self._session.verify = kwargs.get('verify_ssl', True)
+
+        self._session.headers = {
             'Accept': 'application/json;version={}'.format(self.api_version)
         }
         if self.language:
-            self.headers['Accept-Language'] = self.language
+            self._session.headers['Accept-Language'] = self.language
+
+        if kwargs.get('username') and kwargs.get('password'):
+            self._session.auth = (kwargs['username'], kwargs['password'])
+
         self.apidoc = self._load_apidoc()
 
     @property
@@ -145,16 +149,17 @@ class Api:
 
     def http_call(self, http_method, path, params=None, headers=None, options=None):
         full_path = urljoin(self.uri, path)
-        full_headers = self.headers.copy()
-        full_headers.update(headers or {})
-        kwargs = {'headers': full_headers}
-        if http_method == 'get':
-            kwargs['params'] = params or {}
-        else:
-            kwargs['data'] = params or {}
-        if self.username and self.password:
-            kwargs['auth'] = (self.username, self.password)
-        kwargs['verify'] = self.verify_ssl
-        request = requests.request(http_method, full_path, **kwargs)
+        kwargs = {}
+
+        if headers:
+            kwargs['headers'] = headers
+
+        if params:
+            if http_method == 'get':
+                kwargs['params'] = params
+            else:
+                kwargs['json'] = params
+
+        request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
         return request.json()
