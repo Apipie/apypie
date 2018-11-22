@@ -1,7 +1,9 @@
+import json
+
 import py.path
 import pytest
+
 import apypie
-import json
 
 
 @pytest.fixture
