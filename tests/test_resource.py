@@ -16,7 +16,7 @@ def test_resource_has_action_false(resource):
 
 
 def test_resource_action_missing(resource):
-    with pytest.raises(IOError):
+    with pytest.raises(KeyError):
         resource.action('missing')
 
 
@@ -43,5 +43,5 @@ def test_resource_existing(resource):
 
 
 def test_resource_missing(api):
-    with pytest.raises(IOError):
+    with pytest.raises(KeyError):
         api.resource('missing')

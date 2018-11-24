@@ -20,7 +20,7 @@ class Resource:
         if self.has_action(name):
             return Action(name, self.name, self.api)
         else:
-            raise IOError
+            raise KeyError
 
     def has_action(self, name):
         return name in self.actions
