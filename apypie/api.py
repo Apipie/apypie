@@ -81,7 +81,7 @@ class Api:
         if name in self.resources:
             return Resource(self, name)
         else:
-            raise IOError
+            raise KeyError
 
     def _load_apidoc(self):
         apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))

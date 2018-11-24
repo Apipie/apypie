@@ -3,6 +3,7 @@ from __future__ import print_function, absolute_import
 from apypie.route import Route
 from apypie.example import Example
 from apypie.param import Param
+from apypie.exceptions import MissingArgumentsError, InvalidArgumentTypesError
 
 
 class Action:
@@ -51,7 +52,7 @@ class Action:
         required_params = set([param.name for param in params if param.required])
         missing_params = required_params - given_params
         if missing_params:
-            raise KeyError(missing_params)
+            raise MissingArgumentsError(missing_params)
 
         for param, value in values.items():
             param_descriptions = [p for p in params if p.name == param]
@@ -71,6 +72,6 @@ class Action:
             if isinstance(params, dict):
                 return dict((k, v) for k, v in params.items() if v is not None)
             else:
-                raise ValueError
+                raise InvalidArgumentTypesError
         else:
             return {}

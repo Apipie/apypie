@@ -69,25 +69,25 @@ def test_action_find_route_longest_ignoring_none(api):
 
 def test_action_validate_missing_required_params(resource):
     action = resource.action('create')
-    with pytest.raises(KeyError):
+    with pytest.raises(apypie.exceptions.MissingArgumentsError):
         action.validate({'user': {'vip': True}})
 
 
 def test_action_validate_missing_nested_required_params(resource):
     action = resource.action('create')
-    with pytest.raises(KeyError):
+    with pytest.raises(apypie.exceptions.MissingArgumentsError):
         action.validate({'user': {'name': 'John Doe', 'address': {'street': 'K JZD'}}})
 
 
 def test_action_validate_missing_nested_required_params_array(resource):
     action = resource.action('create')
-    with pytest.raises(KeyError):
+    with pytest.raises(apypie.exceptions.MissingArgumentsError):
         action.validate({'user': {'name': 'John Doe', 'contacts': [{'kind': 'email'}]}})
 
 
 def test_action_validate_missing_nested_invalid_params(resource):
     action = resource.action('create')
-    with pytest.raises(ValueError):
+    with pytest.raises(apypie.exceptions.InvalidArgumentTypesError):
         action.validate({'user': {'name': 'John Doe', 'contacts': [1, 2]}})
 
 
