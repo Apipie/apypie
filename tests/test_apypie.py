@@ -9,6 +9,19 @@ def test_init(api):
     assert api.apidoc
 
 
+def test_init_bad_cachedir(tmpdir):
+    bad_cachedir = tmpdir.join('bad')
+    bad_cachedir.ensure(file=True)
+    with pytest.raises(OSError):
+        apypie.Api(uri='https://api.example.com', apidoc_cache_dir=bad_cachedir.strpath)
+
+
+def test_init_bad_response(requests_mock, tmpdir):
+    requests_mock.get('https://api.example.com/apidoc/v1.json', status_code=404)
+    with pytest.raises(apypie.exceptions.DocLoadingError):
+        apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+
+
 @pytest.mark.parametrize('username,password,expected', [
     (None, None, None),
     ('user', None, None),
