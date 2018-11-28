@@ -2,6 +2,7 @@
 import pytest
 
 import apypie
+import json
 
 
 def test_init(api):
@@ -20,6 +21,20 @@ def test_init_bad_response(requests_mock, tmpdir):
     requests_mock.get('https://api.example.com/apidoc/v1.json', status_code=404)
     with pytest.raises(apypie.exceptions.DocLoadingError):
         apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+
+
+def test_init_with_lang(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.tlh.json', json=data)
+    apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh')
+
+
+def test_init_with_lang_family(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.tlh.json', json=data)
+    apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh_EN')
 
 
 @pytest.mark.parametrize('username,password,expected', [
