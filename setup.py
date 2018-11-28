@@ -19,7 +19,7 @@ setup(
     description='Apipie bindings for Python',
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
-    url='https://github.com/evgeni/apypie',
+    url='https://github.com/Apipie/apypie',
     author='Evgeni Golov',
     author_email='evgeni@golov.de',
     classifiers=[
