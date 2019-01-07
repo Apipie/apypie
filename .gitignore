@@ -8,3 +8,5 @@ htmlcov
 .idea
 *.swp
 docs/_build
+build/
+dist/
