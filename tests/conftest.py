@@ -14,6 +14,7 @@ def fixture_dir():
 @pytest.fixture
 def apidoc_cache_dir(fixture_dir, tmpdir):
     fixture_dir.join('dummy.json').copy(tmpdir / 'default.json')
+    fixture_dir.join('dummy.json').copy(tmpdir / 'default.tlh.json')
     return tmpdir
 
 

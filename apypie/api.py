@@ -84,7 +84,7 @@ class Api:
             raise KeyError
 
     def _load_apidoc(self):
-        apifile = os.path.join(self.apidoc_cache_dir, '{}.json'.format(self.apidoc_cache_name))
+        apifile = os.path.join(self.apidoc_cache_dir, '{0}.{1}'.format(self.apidoc_cache_name, self.cache_extension))
         try:
             with open(apifile, 'r') as f:
                 api_doc = json.load(f)
@@ -98,18 +98,29 @@ class Api:
         except OSError as err:
             if err.errno != errno.EEXIST or not os.path.isdir(self.apidoc_cache_dir):
                 raise
-        try:
-            response = self._retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
-        except Exception as e:
-            raise DocLoadingError("""Could not load data from {0}: {1}
-              - is your server down?
-              - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, e))
+        response = None
+        if self.language:
+            response = self._retrieve_apidoc_call('/apidoc/v{0}.{1}.json'.format(self.api_version, self.language), safe=True)
+            language_family = self.language.split('_')[0]
+            if not response and language_family != self.language:
+                response = self._retrieve_apidoc_call('/apidoc/v{0}.{1}.json'.format(self.api_version, language_family), safe=True)
+        if not response:
+            try:
+                response = self._retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
+            except Exception as e:
+                raise DocLoadingError("""Could not load data from {0}: {1}
+                  - is your server down?
+                  - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, e))
         with open(apifile, 'w') as f:
             f.write(json.dumps(response))
         return response
 
-    def _retrieve_apidoc_call(self, path):
-        return self.http_call('get', path)
+    def _retrieve_apidoc_call(self, path, safe=False):
+        try:
+            return self.http_call('get', path)
+        except Exception:
+            if not safe:
+                raise
 
     def call(self, resource_name, action_name, params={}, headers={}, options={}):
         """
@@ -163,3 +174,11 @@ class Api:
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
         return request.json()
+
+    @property
+    def cache_extension(self):
+        if self.language:
+            ext = '{}.json'.format(self.language)
+        else:
+            ext = 'json'
+        return ext
