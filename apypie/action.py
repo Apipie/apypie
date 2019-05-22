@@ -52,7 +52,8 @@ class Action:
         required_params = set([param.name for param in params if param.required])
         missing_params = required_params - given_params
         if missing_params:
-            raise MissingArgumentsError(missing_params)
+            message = "The following required parameters are missing: {}".format(', '.join(missing_params))
+            raise MissingArgumentsError(message)
 
         for param, value in values.items():
             param_descriptions = [p for p in params if p.name == param]

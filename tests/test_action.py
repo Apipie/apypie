@@ -69,8 +69,10 @@ def test_action_find_route_longest_ignoring_none(api):
 
 def test_action_validate_missing_required_params(resource):
     action = resource.action('create')
-    with pytest.raises(apypie.exceptions.MissingArgumentsError):
+    with pytest.raises(apypie.exceptions.MissingArgumentsError) as excinfo:
         action.validate({'user': {'vip': True}})
+    assert "The following required parameters are missing" in str(excinfo.value)
+    assert "name" in str(excinfo.value)
 
 
 def test_action_validate_missing_nested_required_params(resource):
