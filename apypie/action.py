@@ -47,12 +47,23 @@ class Action:
     def validate(self, values=None):
         self._validate(self.params, values)
 
+    def _add_to_path(self, path=None, *additions):
+        if path is None:
+            path = ''
+        for addition in additions:
+            if path == '':
+                path = "{}".format(addition)
+            else:
+                path = "{}[{}]".format(path, addition)
+        return path
+
     def _validate(self, params, values, path=None):
         given_params = set(self.filter_empty_params(values).keys())
         required_params = set([param.name for param in params if param.required])
         missing_params = required_params - given_params
         if missing_params:
-            message = "The following required parameters are missing: {}".format(', '.join(missing_params))
+            missing_params_with_path = [self._add_to_path(path, param) for param in missing_params]
+            message = "The following required parameters are missing: {}".format(', '.join(missing_params_with_path), path)
             raise MissingArgumentsError(message)
 
         for param, value in values.items():
@@ -61,12 +72,10 @@ class Action:
                 param_description = param_descriptions[0]
                 if param_description.params and value is not None:
                     if param_description.expected_type == 'array':
-                        for item in value:
-                            # None = add_to_path(path, param_description.name, i)
-                            self._validate(param_description.params, item, None)
+                        for num, item in enumerate(value):
+                            self._validate(param_description.params, item, self._add_to_path(path, param_description.name, num))
                     if param_description.expected_type == 'hash':
-                        # None = add_to_path(path, param_description.name)
-                        self._validate(param_description.params, value, None)
+                        self._validate(param_description.params, value, self._add_to_path(path, param_description.name))
 
     def filter_empty_params(self, params=None):
         if params is not None:
