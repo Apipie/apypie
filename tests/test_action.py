@@ -77,14 +77,18 @@ def test_action_validate_missing_required_params(resource):
 
 def test_action_validate_missing_nested_required_params(resource):
     action = resource.action('create')
-    with pytest.raises(apypie.exceptions.MissingArgumentsError):
+    with pytest.raises(apypie.exceptions.MissingArgumentsError) as excinfo:
         action.validate({'user': {'name': 'John Doe', 'address': {'street': 'K JZD'}}})
+    assert "The following required parameters are missing" in str(excinfo.value)
+    assert "user[address][city]" in str(excinfo.value)
 
 
 def test_action_validate_missing_nested_required_params_array(resource):
     action = resource.action('create')
-    with pytest.raises(apypie.exceptions.MissingArgumentsError):
+    with pytest.raises(apypie.exceptions.MissingArgumentsError) as excinfo:
         action.validate({'user': {'name': 'John Doe', 'contacts': [{'kind': 'email'}]}})
+    assert "The following required parameters are missing" in str(excinfo.value)
+    assert "user[contacts][0][contact]" in str(excinfo.value)
 
 
 def test_action_validate_missing_nested_invalid_params(resource):
