@@ -24,8 +24,9 @@ def test_route_path_with_params_fill(route):
 
 
 def test_route_path_with_params_fill_wrong(route):
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError) as excinfo:
         route.path_with_params({'wrong': 1})
+    assert "missing param 'id' in parameters" in str(excinfo.value)
 
 
 def test_route_path_with_params(route):
