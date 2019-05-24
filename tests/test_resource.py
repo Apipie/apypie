@@ -16,8 +16,10 @@ def test_resource_has_action_false(resource):
 
 
 def test_resource_action_missing(resource):
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError) as excinfo:
         resource.action('missing')
+    assert "Unknown action 'missing'" in str(excinfo.value)
+    assert "Supported actions: create, create_unnested, destroy, index, show, update" in str(excinfo.value)
 
 
 def test_resource_action_type(resource):
@@ -43,5 +45,7 @@ def test_resource_existing(resource):
 
 
 def test_resource_missing(api):
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError) as excinfo:
         api.resource('missing')
+    assert "Resource 'missing' does not exist in the API." in str(excinfo.value)
+    assert "Existing resources: comments, posts, users" in str(excinfo.value)

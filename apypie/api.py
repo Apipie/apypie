@@ -81,7 +81,8 @@ class Api:
         if name in self.resources:
             return Resource(self, name)
         else:
-            raise KeyError
+            message = "Resource '{}' does not exist in the API. Existing resources: {}".format(name, ', '.join(sorted(self.resources)))
+            raise KeyError(message)
 
     def _load_apidoc(self):
         apifile = os.path.join(self.apidoc_cache_dir, '{0}.{1}'.format(self.apidoc_cache_name, self.cache_extension))

@@ -20,7 +20,8 @@ class Resource:
         if self.has_action(name):
             return Action(name, self.name, self.api)
         else:
-            raise KeyError
+            message = "Unknown action '{}'. Supported actions: {}".format(name, ', '.join(sorted(self.actions)))
+            raise KeyError(message)
 
     def has_action(self, name):
         return name in self.actions

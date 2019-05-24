@@ -24,5 +24,5 @@ class Route:
                 if param in params:
                     result = result.replace(':{}'.format(param), str(params[param]))
                 else:
-                    raise KeyError
+                    raise KeyError("missing param '{}' in parameters".format(param))
             return result

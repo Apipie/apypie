@@ -19,8 +19,9 @@ def test_init_bad_cachedir(tmpdir):
 
 def test_init_bad_response(requests_mock, tmpdir):
     requests_mock.get('https://api.example.com/apidoc/v1.json', status_code=404)
-    with pytest.raises(apypie.exceptions.DocLoadingError):
+    with pytest.raises(apypie.exceptions.DocLoadingError) as excinfo:
         apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+    assert "Could not load data from https://api.example.com" in str(excinfo.value)
 
 
 def test_init_with_lang(fixture_dir, requests_mock, tmpdir):
