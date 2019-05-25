@@ -161,7 +161,9 @@ class Api:
 
     def http_call(self, http_method, path, params=None, headers=None, options=None):
         full_path = urljoin(self.uri, path)
-        kwargs = {}
+        kwargs = {
+            'verify': self._session.verify,
+        }
 
         if headers:
             kwargs['headers'] = headers
