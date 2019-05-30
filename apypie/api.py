@@ -37,7 +37,15 @@ class Api:
         self.uri = kwargs.get('uri')
         self.api_version = kwargs.get('api_version', 1)
         self.language = kwargs.get('language')
-        apidoc_cache_base_dir = kwargs.get('apidoc_cache_base_dir', os.path.join(os.path.expanduser('~/.cache'), 'apypie'))
+
+        # Find where to put the cache by default according to the XDG spec
+        # Not using just get('XDG_CACHE_HOME', '~/.cache') because the spec says
+        # that the defaut should be used if "$XDG_CACHE_HOME is either not set or empty"
+        xdg_cache_home = os.environ.get('XDG_CACHE_HOME', None)
+        if not xdg_cache_home:
+            xdg_cache_home = '~/.cache'
+
+        apidoc_cache_base_dir = kwargs.get('apidoc_cache_base_dir', os.path.join(os.path.expanduser(xdg_cache_home), 'apypie'))
         self.apidoc_cache_dir = kwargs.get('apidoc_cache_dir', os.path.join(apidoc_cache_base_dir, self.uri.replace(':', '_').replace('/', '_'), 'v{}'.format(self.api_version)))
         self.apidoc_cache_name = kwargs.get('apidoc_cache_name', 'default')
 
