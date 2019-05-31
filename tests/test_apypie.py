@@ -3,6 +3,7 @@ import pytest
 
 import apypie
 import json
+import os
 
 
 def test_init(api):
@@ -36,6 +37,17 @@ def test_init_with_lang_family(fixture_dir, requests_mock, tmpdir):
         data = json.load(read_file)
     requests_mock.get('https://api.example.com/apidoc/v1.tlh.json', json=data)
     apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh_EN')
+
+
+def test_init_with_xdg_cachedir(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
+    old_environ = os.environ.copy()
+    os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
+    apypie.Api(uri='https://api.example.com')
+    os.environ = old_environ
+    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
 
 
 @pytest.mark.parametrize('username,password,expected', [
