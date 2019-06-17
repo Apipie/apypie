@@ -76,6 +76,9 @@ class Action:
                             self._validate(param_description.params, item, self._add_to_path(path, param_description.name, num))
                     if param_description.expected_type == 'hash':
                         self._validate(param_description.params, value, self._add_to_path(path, param_description.name))
+                if param_description.expected_type == 'boolean':
+                    if not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]):
+                        raise ValueError(param_description.validator)
 
     def filter_empty_params(self, params=None):
         if params is not None:

@@ -97,6 +97,23 @@ def test_action_validate_missing_nested_invalid_params(resource):
         action.validate({'user': {'name': 'John Doe', 'contacts': [1, 2]}})
 
 
+def test_action_validate_invalid_boolean(resource):
+    action = resource.action('create')
+    with pytest.raises(ValueError) as excinfo:
+        action.validate({'user': {'name': 'John Doe', 'vip': 'maybe'}})
+    assert "Must be one of: <code>true</code>, <code>false</code>, <code>1</code>, <code>0</code>" in str(excinfo.value)
+
+
+def test_action_validate_valid_boolean(resource):
+    action = resource.action('create')
+    action.validate({'user': {'name': 'John Doe', 'vip': False}})
+
+
+def test_action_validate_valid_boolean_as_int(resource):
+    action = resource.action('create')
+    action.validate({'user': {'name': 'John Doe', 'vip': 0}})
+
+
 def test_action_validate_minimal_correct_params(resource):
     resource.action('create').validate({'user': {'name': 'John Doe'}})
     resource.action('create_unnested').validate({'name': 'John Doe'})
