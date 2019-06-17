@@ -94,3 +94,19 @@ class Action:
                 raise InvalidArgumentTypesError
         else:
             return {}
+
+    def prepare_params(self, input_dict):
+        return self._prepare_params(self.params, input_dict)
+
+    def _prepare_params(self, action_params, input_dict):
+        result = {}
+
+        for param in action_params:
+            if param.expected_type == 'hash':
+                nested_result = self._prepare_params(param.params, input_dict)
+                if nested_result:
+                    result[param.name] = nested_result
+            elif param.name in input_dict:
+                result[param.name] = input_dict[param.name]
+
+        return result
