@@ -5,6 +5,11 @@ from apypie.example import Example
 from apypie.param import Param
 from apypie.exceptions import MissingArgumentsError, InvalidArgumentTypesError
 
+try:
+    basestring
+except NameError:  # Python 3 has no basestring
+    basestring = str  # pylint: disable=W0622
+
 
 class Action:
     """
@@ -81,6 +86,9 @@ class Action:
                         raise ValueError(param_description.validator)
                 if param_description.expected_type == 'numeric':
                     if not isinstance(value, int):
+                        raise ValueError(param_description.validator)
+                if param_description.expected_type == 'string':
+                    if not isinstance(value, basestring):
                         raise ValueError(param_description.validator)
 
     def filter_empty_params(self, params=None):

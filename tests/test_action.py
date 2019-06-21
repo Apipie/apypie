@@ -126,6 +126,18 @@ def test_action_validate_valid_numeric(api):
     action.validate({'id': 1})
 
 
+def test_action_validate_invalid_string(resource):
+    action = resource.action('create')
+    with pytest.raises(ValueError) as excinfo:
+        action.validate({'user': {'name': 1}})
+    assert "Must be a String" in str(excinfo.value)
+
+
+def test_action_validate_valid_string(resource):
+    action = resource.action('create')
+    action.validate({'user': {'name': 'John Doe'}})
+
+
 def test_action_validate_minimal_correct_params(resource):
     resource.action('create').validate({'user': {'name': 'John Doe'}})
     resource.action('create_unnested').validate({'name': 'John Doe'})
