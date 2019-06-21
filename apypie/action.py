@@ -79,7 +79,7 @@ class Action:
                     if param_description.expected_type == 'array':
                         for num, item in enumerate(value):
                             self._validate(param_description.params, item, self._add_to_path(path, param_description.name, num))
-                    if param_description.expected_type == 'hash':
+                    elif param_description.expected_type == 'hash':
                         self._validate(param_description.params, value, self._add_to_path(path, param_description.name))
                 if ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
                         or (param_description.expected_type == 'numeric' and not isinstance(value, int))
