@@ -114,6 +114,18 @@ def test_action_validate_valid_boolean_as_int(resource):
     action.validate({'user': {'name': 'John Doe', 'vip': 0}})
 
 
+def test_action_validate_invalid_numeric(api):
+    action = api.resource('comments').action('archive')
+    with pytest.raises(ValueError) as excinfo:
+        action.validate({'id': 'MYNUMBER'})
+    assert "Must be a Integer" in str(excinfo.value)
+
+
+def test_action_validate_valid_numeric(api):
+    action = api.resource('comments').action('archive')
+    action.validate({'id': 1})
+
+
 def test_action_validate_minimal_correct_params(resource):
     resource.action('create').validate({'user': {'name': 'John Doe'}})
     resource.action('create_unnested').validate({'name': 'John Doe'})
