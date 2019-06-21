@@ -158,3 +158,13 @@ def test_action_validate_full_correct_params(resource):
         ]
     }}
     action.validate(params)
+
+
+@pytest.mark.parametrize('resource,action,input_dict,expected_params', [
+    ('comments', 'archive', {'id': 1}, {'id': 1}),
+    ('comments', 'archive', {'id': 1, 'should_be_ignored': True}, {'id': 1}),
+    ('users', 'create', {'name': 'testuser'}, {'user': {'name': 'testuser'}}),
+])
+def test_action_prepare_params(api, resource, action, input_dict, expected_params):
+    generated_params = api.resource(resource).action(action).prepare_params(input_dict)
+    assert expected_params == generated_params
