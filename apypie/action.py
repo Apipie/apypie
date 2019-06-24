@@ -84,7 +84,7 @@ class Action:
                 if ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
                         or (param_description.expected_type == 'numeric' and not isinstance(value, int))
                         or (param_description.expected_type == 'string' and not isinstance(value, (basestring, int)))):
-                    raise ValueError(param_description.validator)
+                    raise ValueError("{} ({}): {}".format(param, value, param_description.validator))
 
     def filter_empty_params(self, params=None):
         if params is not None:
