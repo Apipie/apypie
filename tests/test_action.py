@@ -101,7 +101,7 @@ def test_action_validate_invalid_boolean(resource):
     action = resource.action('create')
     with pytest.raises(ValueError) as excinfo:
         action.validate({'user': {'name': 'John Doe', 'vip': 'maybe'}})
-    assert "Must be one of: <code>true</code>, <code>false</code>, <code>1</code>, <code>0</code>" in str(excinfo.value)
+    assert "vip (maybe): Must be one of: <code>true</code>, <code>false</code>, <code>1</code>, <code>0</code>" in str(excinfo.value)
 
 
 def test_action_validate_valid_boolean(resource):
@@ -118,7 +118,7 @@ def test_action_validate_invalid_numeric(api):
     action = api.resource('comments').action('archive')
     with pytest.raises(ValueError) as excinfo:
         action.validate({'id': 'MYNUMBER'})
-    assert "Must be a Integer" in str(excinfo.value)
+    assert "id (MYNUMBER): Must be a Integer" in str(excinfo.value)
 
 
 def test_action_validate_valid_numeric(api):
@@ -130,7 +130,7 @@ def test_action_validate_invalid_string(resource):
     action = resource.action('create')
     with pytest.raises(ValueError) as excinfo:
         action.validate({'user': {'name': []}})
-    assert "Must be a String" in str(excinfo.value)
+    assert "name ([]): Must be a String" in str(excinfo.value)
 
 
 def test_action_validate_valid_string(resource):
