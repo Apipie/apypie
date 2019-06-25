@@ -129,13 +129,19 @@ def test_action_validate_valid_numeric(api):
 def test_action_validate_invalid_string(resource):
     action = resource.action('create')
     with pytest.raises(ValueError) as excinfo:
-        action.validate({'user': {'name': 1}})
+        action.validate({'user': {'name': []}})
     assert "Must be a String" in str(excinfo.value)
 
 
 def test_action_validate_valid_string(resource):
     action = resource.action('create')
     action.validate({'user': {'name': 'John Doe'}})
+
+
+def test_action_validate_valid_string_as_int(resource):
+    # workaround for https://projects.theforeman.org/issues/27107
+    action = resource.action('create')
+    action.validate({'user': {'name': 1}})
 
 
 def test_action_validate_minimal_correct_params(resource):
