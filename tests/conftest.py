@@ -34,3 +34,11 @@ def resource(api):
 @pytest.fixture
 def action(resource):
     return resource.action('show')
+
+
+@pytest.fixture
+def foreman_api(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('foreman.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://foreman.example.com/apidoc/v2.json', json=data)
+    return apypie.Api(uri='https://foreman.example.com', api_version=2, apidoc_cache_dir=tmpdir.strpath)

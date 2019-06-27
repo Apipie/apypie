@@ -174,3 +174,12 @@ def test_action_validate_full_correct_params(resource):
 def test_action_prepare_params(api, resource, action, input_dict, expected_params):
     generated_params = api.resource(resource).action(action).prepare_params(input_dict)
     assert expected_params == generated_params
+
+
+def test_action_prepare_params_hash_no_nested_params(foreman_api):
+    # some actions have an expected_type of hash, but don't actually define how the hash should look like
+    action = foreman_api.resource('compute_attributes').action('create')
+    input_dict = {'compute_profile_id': 1, 'compute_resource_id': 1, 'vm_attrs': {'some_attr': 'value'}}
+    expected_params = {'compute_profile_id': 1, 'compute_resource_id': 1, 'compute_attribute': {'vm_attrs': {'some_attr': 'value'}}}
+    generated_params = action.prepare_params(input_dict)
+    assert expected_params == generated_params
