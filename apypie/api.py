@@ -177,10 +177,12 @@ class Api:
             kwargs['headers'] = headers
 
         if params:
-            if http_method == 'get':
+            if http_method in ['get', 'head']:
                 kwargs['params'] = params
             else:
                 kwargs['json'] = params
+        elif http_method in ['post', 'put', 'patch']:
+            kwargs['json'] = {}
 
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
