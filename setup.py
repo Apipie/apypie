@@ -15,7 +15,7 @@ with open(path.join(path.abspath(path.dirname(__file__)), 'README.md'), encoding
 
 setup(
     name='apypie',
-    version='0.0.1',
+    version='0.0.2',
     description='Apipie bindings for Python',
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
@@ -23,7 +23,7 @@ setup(
     author='Evgeni Golov',
     author_email='evgeni@golov.de',
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 2',
