@@ -22,10 +22,16 @@ project = 'apypie'
 copyright = '2018, Evgeni Golov'
 author = 'Evgeni Golov'
 
-# The short X.Y version
-version = ''
-# The full version, including alpha/beta/rc tags
-release = '0.0.1'
+try:
+    import pkg_resources
+    package = pkg_resources.require("apypie")[0]
+    version = package.version
+    release = package.version
+except Exception:
+    # The short X.Y version
+    version = ''
+    # The full version, including alpha/beta/rc tags
+    release = ''
 
 
 # -- General configuration ---------------------------------------------------
