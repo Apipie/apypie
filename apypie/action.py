@@ -42,10 +42,10 @@ class Action:
         return self.api.call(self.resource, self.name, params, headers, options)
 
     def find_route(self, params=None):
-        params = self.filter_empty_params(params)
+        param_keys = set(self.filter_empty_params(params).keys())
         sorted_routes = sorted(self.routes, key=lambda route: [-1 * len(route.params_in_path), route.path])
         for route in sorted_routes:
-            if sorted(route.params_in_path) == sorted(params.keys()):
+            if set(route.params_in_path) <= param_keys:
                 return route
         return sorted_routes[-1]
 
