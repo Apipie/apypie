@@ -172,5 +172,5 @@ def test_http_call_post_with_params(api, requests_mock):
         'Content-Type': 'application/json',
     }
     params = {'test': 'all the things'}
-    requests_mock.post('https://api.example.com/', text='{}', headers=expected_headers)
+    requests_mock.post('https://api.example.com/', text='{}', request_headers=expected_headers)
     api.http_call('post', '/', params)
