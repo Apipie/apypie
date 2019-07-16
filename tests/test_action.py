@@ -55,9 +55,21 @@ def test_action_find_route(resource):
     assert '/users' == action.find_route().path
 
 
+def test_action_find_route_ignoring_unknown_keys(resource):
+    action = resource.action('index')
+    params = {'per_page': 5}
+    assert '/users' == action.find_route(params).path
+
+
 def test_action_find_route_longest(api):
     action = api.resource('comments').action('archive')
     params = {'id': 1, 'user_id': 1}
+    assert '/archive/users/:user_id/comments/:id' == action.find_route(params).path
+
+
+def test_action_find_route_longest_ignoring_unknown_keys(api):
+    action = api.resource('comments').action('archive')
+    params = {'id': 1, 'user_id': 1, 'per_page': 5}
     assert '/archive/users/:user_id/comments/:id' == action.find_route(params).path
 
 
