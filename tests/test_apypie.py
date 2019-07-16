@@ -162,7 +162,11 @@ def test_http_call_get_with_params(api, requests_mock):
 
 
 def test_http_call_post(api, requests_mock):
-    requests_mock.post('https://api.example.com/', text='{}')
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Content-Type': 'application/json',
+    }
+    requests_mock.post('https://api.example.com/', text='{}', request_headers=expected_headers)
     api.http_call('post', '/')
 
 
@@ -174,3 +178,36 @@ def test_http_call_post_with_params(api, requests_mock):
     params = {'test': 'all the things'}
     requests_mock.post('https://api.example.com/', text='{}', request_headers=expected_headers)
     api.http_call('post', '/', params)
+
+
+def test_http_call_put(api, requests_mock):
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Content-Type': 'application/json',
+    }
+    requests_mock.put('https://api.example.com/', text='{}', request_headers=expected_headers)
+    api.http_call('put', '/')
+
+
+def test_http_call_put_with_params(api, requests_mock):
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Content-Type': 'application/json',
+    }
+    params = {'test': 'all the things'}
+    requests_mock.put('https://api.example.com/', text='{}', request_headers=expected_headers)
+    api.http_call('put', '/', params)
+
+
+def test_http_call_delete(api, requests_mock):
+    requests_mock.delete('https://api.example.com/', text='{}')
+    api.http_call('delete', '/')
+
+
+def test_http_call_delete_with_params(api, requests_mock):
+    expected_headers = {
+        'Accept': 'application/json;version=1',
+        'Content-Type': 'application/json',
+    }
+    requests_mock.delete('https://api.example.com/', text='{}', request_headers=expected_headers)
+    api.http_call('delete', '/', {'test': 'all the things'})
