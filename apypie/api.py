@@ -131,7 +131,7 @@ class Api:
             if not safe:
                 raise
 
-    def call(self, resource_name, action_name, params={}, headers={}, options={}, **kwargs):
+    def call(self, resource_name, action_name, params={}, headers={}, options={}, files=None):
         """
         Call an action in the API.
 
@@ -156,20 +156,22 @@ class Api:
         if not options.get('skip_validation', False):
             action.validate(params)
 
-        return self._call_action(action, params, headers, options, **kwargs)
+        return self._call_action(action, params, headers, options, files)
 
-    def _call_action(self, action, params={}, headers={}, options={}, **kwargs):
+    def _call_action(self, action, params={}, headers={}, options={}, files=None):
         route = action.find_route(params)
         get_params = dict((key, value) for key, value in params.items() if key not in route.params_in_path)
         return self.http_call(
             route.method,
             route.path_with_params(params),
             get_params,
-            headers, options, **kwargs)
+            headers, options, files)
 
-    def http_call(self, http_method, path, params=None, headers=None, options=None, **kwargs):
+    def http_call(self, http_method, path, params=None, headers=None, options=None, files=None):
         full_path = urljoin(self.uri, path)
-        kwargs.update({'verify': self._session.verify})
+        kwargs = {
+            'verify': self._session.verify,
+        }
 
         if headers:
             kwargs['headers'] = headers
@@ -181,6 +183,9 @@ class Api:
                 kwargs['json'] = params
         elif http_method in ['post', 'put', 'patch']:
             kwargs['json'] = {}
+
+        if files:
+            kwargs['files'] = files
 
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
