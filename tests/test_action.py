@@ -47,7 +47,7 @@ def test_action_call(resource, mocker):
     headers = {'content-type': 'application/json'}
     mocker.patch('apypie.Api.call', autospec=True)
     assert resource.action('index').call(params, headers)
-    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {})
+    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {}, None)
 
 
 def test_action_find_route(resource):
