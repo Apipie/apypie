@@ -38,8 +38,8 @@ class Action:
     def examples(self):
         return [Example.parse(example) for example in self.apidoc['examples']]
 
-    def call(self, params={}, headers={}, options={}):
-        return self.api.call(self.resource, self.name, params, headers, options)
+    def call(self, params={}, headers={}, options={}, **kwargs):
+        return self.api.call(self.resource, self.name, params, headers, options, **kwargs)
 
     def find_route(self, params=None):
         param_keys = set(self.filter_empty_params(params).keys())

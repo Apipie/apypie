@@ -26,5 +26,5 @@ class Resource:
     def has_action(self, name):
         return name in self.actions
 
-    def call(self, action, params={}, headers={}, options={}):
-        return self.api.call(self.name, action, params, headers, options)
+    def call(self, action, params={}, headers={}, options={}, **kwargs):
+        return self.api.call(self.name, action, params, headers, options, **kwargs)
