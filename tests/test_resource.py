@@ -31,13 +31,13 @@ def test_resource_call_action(resource, mocker):
     headers = {'content-type': 'application/json'}
     mocker.patch('apypie.Api.call', autospec=True)
     assert resource.call('index', params, headers)
-    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {})
+    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', params, headers, {}, None)
 
 
 def test_resource_call_action_minimal(resource, mocker):
     mocker.patch('apypie.Api.call', autospec=True)
     assert resource.call('index')
-    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', {}, {}, {})
+    resource.api.call.assert_called_once_with(resource.api, resource.name, 'index', {}, {}, {}, None)
 
 
 def test_resource_existing(resource):
