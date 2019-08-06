@@ -189,6 +189,8 @@ class Api:
 
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
+        if request.status_code == requests.codes.no_content:
+            return None
         return request.json()
 
     @property
