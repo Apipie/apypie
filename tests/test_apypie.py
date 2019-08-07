@@ -81,7 +81,7 @@ def test_call_method(api, mocker):
     headers = {'content-type': 'application/json'}
     mocker.patch('apypie.Api.http_call', autospec=True)
     api.call('users', 'index', params, headers)
-    api.http_call.assert_called_once_with(api, 'get', '/users', params, headers, {}, None)
+    api.http_call.assert_called_once_with(api, 'get', '/users', params, headers, None)
 
 
 def test_call_method_and_skip_validation(api, mocker):
@@ -90,7 +90,7 @@ def test_call_method_and_skip_validation(api, mocker):
     options = {'skip_validation': True}
     mocker.patch('apypie.Api.http_call', autospec=True)
     api.call('users', 'create', params, headers, options)
-    api.http_call.assert_called_once_with(api, 'post', '/users', params, headers, options, None)
+    api.http_call.assert_called_once_with(api, 'post', '/users', params, headers, None)
 
 
 def test_call_method_and_fill_params(api, mocker):
@@ -98,7 +98,7 @@ def test_call_method_and_fill_params(api, mocker):
     headers = {'content-type': 'application/json'}
     mocker.patch('apypie.Api.http_call', autospec=True)
     api.call('users', 'show', params, headers)
-    api.http_call.assert_called_once_with(api, 'get', '/users/1', {}, headers, {}, None)
+    api.http_call.assert_called_once_with(api, 'get', '/users/1', {}, headers, None)
 
 
 def test_http_call_get(api, requests_mock):

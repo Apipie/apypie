@@ -156,18 +156,18 @@ class Api:
         if not options.get('skip_validation', False):
             action.validate(params)
 
-        return self._call_action(action, params, headers, options, files)
+        return self._call_action(action, params, headers, files)
 
-    def _call_action(self, action, params={}, headers={}, options={}, files=None):
+    def _call_action(self, action, params={}, headers={}, files=None):
         route = action.find_route(params)
         get_params = dict((key, value) for key, value in params.items() if key not in route.params_in_path)
         return self.http_call(
             route.method,
             route.path_with_params(params),
             get_params,
-            headers, options, files)
+            headers, files)
 
-    def http_call(self, http_method, path, params=None, headers=None, options=None, files=None):
+    def http_call(self, http_method, path, params=None, headers=None, files=None):
         full_path = urljoin(self.uri, path)
         kwargs = {
             'verify': self._session.verify,
