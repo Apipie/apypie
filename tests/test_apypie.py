@@ -211,3 +211,8 @@ def test_http_call_delete_with_params(api, requests_mock):
     }
     requests_mock.delete('https://api.example.com/', text='{}', request_headers=expected_headers)
     api.http_call('delete', '/', {'test': 'all the things'})
+
+
+def test_http_call_with_no_content_answer(api, requests_mock):
+    requests_mock.delete('https://api.example.com/', status_code=204)
+    api.http_call('delete', '/', {})
