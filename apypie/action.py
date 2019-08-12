@@ -49,8 +49,8 @@ class Action:
                 return route
         return sorted_routes[-1]
 
-    def validate(self, values=None):
-        self._validate(self.params, values)
+    def validate(self, values=None, files=None):
+        self._validate(self.params, values, files)
 
     def _add_to_path(self, path=None, *additions):
         if path is None:
@@ -62,10 +62,11 @@ class Action:
                 path = "{}[{}]".format(path, addition)
         return path
 
-    def _validate(self, params, values, path=None):
+    def _validate(self, params, values, files=None, path=None):
         given_params = set(self.filter_empty_params(values).keys())
+        given_files = set((files or {}).keys())
         required_params = set([param.name for param in params if param.required])
-        missing_params = required_params - given_params
+        missing_params = required_params - given_params - given_files
         if missing_params:
             missing_params_with_path = [self._add_to_path(path, param) for param in missing_params]
             message = "The following required parameters are missing: {}".format(', '.join(missing_params_with_path), path)
@@ -78,9 +79,9 @@ class Action:
                 if param_description.params and value is not None:
                     if param_description.expected_type == 'array':
                         for num, item in enumerate(value):
-                            self._validate(param_description.params, item, self._add_to_path(path, param_description.name, num))
+                            self._validate(param_description.params, item, path=self._add_to_path(path, param_description.name, num))
                     elif param_description.expected_type == 'hash':
-                        self._validate(param_description.params, value, self._add_to_path(path, param_description.name))
+                        self._validate(param_description.params, value, path=self._add_to_path(path, param_description.name))
                 if ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
                         or (param_description.expected_type == 'numeric' and not isinstance(value, int))
                         or (param_description.expected_type == 'string' and not isinstance(value, (basestring, int)))):

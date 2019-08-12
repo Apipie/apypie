@@ -156,6 +156,11 @@ def test_action_validate_valid_string_as_int(resource):
     action.validate({'user': {'name': 1}})
 
 
+def test_action_validate_files(resource):
+    # this pretends to upload the user as a file
+    resource.action('create_unnested').validate({}, {'name': 'John Doe'})
+
+
 def test_action_validate_minimal_correct_params(resource):
     resource.action('create').validate({'user': {'name': 'John Doe'}})
     resource.action('create_unnested').validate({'name': 'John Doe'})
