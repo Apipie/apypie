@@ -131,7 +131,7 @@ class Api:
             if not safe:
                 raise
 
-    def call(self, resource_name, action_name, params={}, headers={}, options={}, files=None):
+    def call(self, resource_name, action_name, params={}, headers={}, options={}, data=None, files=None):
         """
         Call an action in the API.
 
@@ -156,18 +156,18 @@ class Api:
         if not options.get('skip_validation', False):
             action.validate(params)
 
-        return self._call_action(action, params, headers, files)
+        return self._call_action(action, params, headers, data, files)
 
-    def _call_action(self, action, params={}, headers={}, files=None):
+    def _call_action(self, action, params={}, headers={}, data=None, files=None):
         route = action.find_route(params)
         get_params = dict((key, value) for key, value in params.items() if key not in route.params_in_path)
         return self.http_call(
             route.method,
             route.path_with_params(params),
             get_params,
-            headers, files)
+            headers, data, files)
 
-    def http_call(self, http_method, path, params=None, headers=None, files=None):
+    def http_call(self, http_method, path, params=None, headers=None, data=None, files=None):
         full_path = urljoin(self.uri, path)
         kwargs = {
             'verify': self._session.verify,
@@ -186,6 +186,9 @@ class Api:
 
         if files:
             kwargs['files'] = files
+
+        if data:
+            kwargs['data'] = data
 
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
