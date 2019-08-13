@@ -49,8 +49,8 @@ class Action:
                 return route
         return sorted_routes[-1]
 
-    def validate(self, values=None, files=None):
-        self._validate(self.params, values, files)
+    def validate(self, values=None, data=None, files=None):
+        self._validate(self.params, values, data, files)
 
     def _add_to_path(self, path=None, *additions):
         if path is None:
@@ -62,11 +62,12 @@ class Action:
                 path = "{}[{}]".format(path, addition)
         return path
 
-    def _validate(self, params, values, files=None, path=None):
+    def _validate(self, params, values, data=None, files=None, path=None):
         given_params = set(self.filter_empty_params(values).keys())
         given_files = set((files or {}).keys())
+        given_data = set((data or {}).keys())
         required_params = set([param.name for param in params if param.required])
-        missing_params = required_params - given_params - given_files
+        missing_params = required_params - given_params - given_files - given_data
         if missing_params:
             missing_params_with_path = [self._add_to_path(path, param) for param in missing_params]
             message = "The following required parameters are missing: {}".format(', '.join(missing_params_with_path), path)
