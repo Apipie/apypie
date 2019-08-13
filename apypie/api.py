@@ -154,7 +154,7 @@ class Api:
         resource = Resource(self, resource_name)
         action = resource.action(action_name)
         if not options.get('skip_validation', False):
-            action.validate(params)
+            action.validate(params, files)
 
         return self._call_action(action, params, headers, data, files)
 
