@@ -138,6 +138,11 @@ def test_action_validate_valid_numeric(api):
     action.validate({'id': 1})
 
 
+def test_action_validate_valid_numeric_as_string(api):
+    action = api.resource('comments').action('archive')
+    action.validate({'id': '1'})
+
+
 def test_action_validate_invalid_string(resource):
     action = resource.action('create')
     with pytest.raises(ValueError) as excinfo:
