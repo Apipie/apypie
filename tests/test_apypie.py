@@ -110,7 +110,7 @@ def test_http_call_get_headers(api, requests_mock):
     headers = {'X-Apypie-Test': 'Awesome'}
     expected_headers = {
         'Accept': 'application/json;version=1',
-        'Accept-Encoding': 'deflate, gzip',
+        'Accept-Encoding': 'gzip, deflate',
         'User-Agent': 'apypie (https://github.com/Apipie/apypie)',
     }
     expected_headers.update(headers)

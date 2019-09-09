@@ -52,11 +52,8 @@ class Api:
         self._session = requests.Session()
         self._session.verify = kwargs.get('verify_ssl', True)
 
-        self._session.headers = {
-            'Accept': 'application/json;version={}'.format(self.api_version),
-            'Accept-Encoding': 'deflate, gzip',
-            'User-Agent': 'apypie (https://github.com/Apipie/apypie)',
-        }
+        self._session.headers['Accept'] = 'application/json;version={}'.format(self.api_version)
+        self._session.headers['User-Agent'] = 'apypie (https://github.com/Apipie/apypie)'
         if self.language:
             self._session.headers['Accept-Language'] = self.language
 
