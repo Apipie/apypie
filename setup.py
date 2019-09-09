@@ -34,4 +34,7 @@ setup(
     ],
     keywords='api apipie bindings',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
+    install_requires=[
+        'requests>=2.4.2',
+    ],
 )
