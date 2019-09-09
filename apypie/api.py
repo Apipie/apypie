@@ -55,6 +55,7 @@ class Api:
         self._session.headers = {
             'Accept': 'application/json;version={}'.format(self.api_version),
             'Accept-Encoding': 'deflate, gzip',
+            'User-Agent': 'apypie (https://github.com/Apipie/apypie)',
         }
         if self.language:
             self._session.headers['Accept-Language'] = self.language
