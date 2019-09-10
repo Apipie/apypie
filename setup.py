@@ -15,7 +15,7 @@ with open(path.join(path.abspath(path.dirname(__file__)), 'README.md'), encoding
 
 setup(
     name='apypie',
-    version='0.0.5',
+    version='0.1.0',
     description='Apipie bindings for Python',
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
