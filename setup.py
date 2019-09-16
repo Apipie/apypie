@@ -17,6 +17,7 @@ setup(
     name='apypie',
     version='0.1.0',
     description='Apipie bindings for Python',
+    license='MIT',
     long_description=LONG_DESCRIPTION,
     long_description_content_type='text/markdown',
     url='https://github.com/Apipie/apypie',
