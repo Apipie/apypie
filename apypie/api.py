@@ -78,6 +78,11 @@ class Api:
         else:
             return default
 
+    def update_cache(self, cache_name):
+        if cache_name != self.apidoc_cache_name:
+            self.clean_cache()
+            self.apidoc_cache_name = cache_name
+
     def clean_cache(self):
         self._apidoc = None
         for filename in glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))):
