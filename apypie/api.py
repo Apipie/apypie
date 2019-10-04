@@ -1,8 +1,9 @@
 from __future__ import print_function, absolute_import
 
+import errno
+import glob
 import json
 import os
-import errno
 try:
     from urlparse import urljoin
 except ImportError:
@@ -48,7 +49,7 @@ class Api:
         apidoc_cache_base_dir = kwargs.get('apidoc_cache_base_dir', os.path.join(os.path.expanduser(xdg_cache_home), 'apypie'))
         apidoc_cache_dir_default = os.path.join(apidoc_cache_base_dir, self.uri.replace(':', '_').replace('/', '_'), 'v{}'.format(self.api_version))
         self.apidoc_cache_dir = kwargs.get('apidoc_cache_dir', apidoc_cache_dir_default)
-        self.apidoc_cache_name = kwargs.get('apidoc_cache_name', 'default')
+        self.apidoc_cache_name = kwargs.get('apidoc_cache_name', self._set_default_name())
 
         self._session = requests.Session()
         self._session.verify = kwargs.get('verify_ssl', True)
@@ -62,6 +63,14 @@ class Api:
             self._session.auth = (kwargs['username'], kwargs['password'])
 
         self.apidoc = self._load_apidoc()
+
+    def _set_default_name(self, default='default'):
+        """find the newest file in the cachedir if any"""
+        cache_file = sorted(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), key=os.path.getctime, reverse=True)
+        if cache_file:
+            return os.path.basename(cache_file[0]).replace(self.cache_extension, '')
+        else:
+            return default
 
     @property
     def resources(self):

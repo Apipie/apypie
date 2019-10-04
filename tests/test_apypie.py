@@ -50,6 +50,25 @@ def test_init_with_xdg_cachedir(fixture_dir, requests_mock, tmpdir):
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
 
 
+def test_init_with_existing_cachedir(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
+
+    old_environ = os.environ.copy()
+    os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
+
+    json_path = tmpdir.join('apypie/https___api.example.com/v1/deadc0ffee.json')
+    json_path.ensure(file=True)
+    fixture_dir.join('dummy.json').copy(json_path)
+
+    apypie.Api(uri='https://api.example.com')
+    os.environ = old_environ
+
+    assert json_path.check(file=1)
+    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+
+
 @pytest.mark.parametrize('username,password,expected', [
     (None, None, None),
     ('user', None, None),
