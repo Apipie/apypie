@@ -177,6 +177,26 @@ def test_http_call_get_headers_lang(apidoc_cache_dir, requests_mock):
     api.http_call('get', '/', headers=headers)
 
 
+def test_http_call_get_headers_cache(fixture_dir, requests_mock, tmpdir):
+    response_headers = {'Apipie-Checksum': 'c0ffeec0ffee'}
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', headers=response_headers, json=data)
+
+    old_environ = os.environ.copy()
+    os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
+
+    api = apypie.Api(uri='https://api.example.com')
+    api.apidoc
+
+    print(api.apidoc_cache_name)
+
+    os.environ = old_environ
+
+    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+    assert tmpdir.join('apypie/https___api.example.com/v1/c0ffeec0ffee.json').check(file=1)
+
+
 def test_http_call_get_with_params(api, requests_mock):
     requests_mock.get('https://api.example.com/?test=all+the+things', text='{}')
     api.http_call('get', '/', {'test': 'all the things'})
