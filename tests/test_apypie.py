@@ -237,3 +237,17 @@ def test_http_call_delete_with_params(api, requests_mock):
 def test_http_call_with_no_content_answer(api, requests_mock):
     requests_mock.delete('https://api.example.com/', status_code=204)
     api.http_call('delete', '/', {})
+
+
+def test_clean_cache(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
+    old_environ = os.environ.copy()
+    os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
+    api = apypie.Api(uri='https://api.example.com')
+    os.environ = old_environ
+    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
+    api.clean_cache()
+    assert api._apidoc is None
+    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)

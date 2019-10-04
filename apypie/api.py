@@ -62,7 +62,13 @@ class Api:
         if kwargs.get('username') and kwargs.get('password'):
             self._session.auth = (kwargs['username'], kwargs['password'])
 
-        self.apidoc = self._load_apidoc()
+        self._apidoc = self._load_apidoc()
+
+    @property
+    def apidoc(self):
+        if self._apidoc is None:
+            self._apidoc = self._load_apidoc()
+        return self._apidoc
 
     def _set_default_name(self, default='default'):
         """find the newest file in the cachedir if any"""
@@ -71,6 +77,11 @@ class Api:
             return os.path.basename(cache_file[0]).replace(self.cache_extension, '')
         else:
             return default
+
+    def clean_cache(self):
+        self._apidoc = None
+        for filename in glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))):
+            os.unlink(filename)
 
     @property
     def resources(self):
