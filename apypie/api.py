@@ -92,7 +92,7 @@ class Api:
             raise KeyError(message)
 
     def _load_apidoc(self):
-        apifile = os.path.join(self.apidoc_cache_dir, '{0}.{1}'.format(self.apidoc_cache_name, self.cache_extension))
+        apifile = os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
         try:
             with open(apifile, 'r') as f:
                 api_doc = json.load(f)
@@ -198,7 +198,7 @@ class Api:
     @property
     def cache_extension(self):
         if self.language:
-            ext = '{}.json'.format(self.language)
+            ext = '.{}.json'.format(self.language)
         else:
-            ext = 'json'
+            ext = '.json'
         return ext
