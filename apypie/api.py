@@ -70,6 +70,10 @@ class Api:
             self._apidoc = self._load_apidoc()
         return self._apidoc
 
+    @property
+    def apidoc_cache_file(self):
+        return os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
+
     def _set_default_name(self, default='default'):
         """find the newest file in the cachedir if any"""
         cache_file = sorted(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), key=os.path.getctime, reverse=True)
@@ -118,15 +122,14 @@ class Api:
             raise KeyError(message)
 
     def _load_apidoc(self):
-        apifile = os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
         try:
-            with open(apifile, 'r') as f:
+            with open(self.apidoc_cache_file, 'r') as f:
                 api_doc = json.load(f)
         except IOError:
-            api_doc = self._retrieve_apidoc(apifile)
+            api_doc = self._retrieve_apidoc()
         return api_doc
 
-    def _retrieve_apidoc(self, apifile):
+    def _retrieve_apidoc(self):
         try:
             os.makedirs(self.apidoc_cache_dir)
         except OSError as err:
@@ -145,7 +148,7 @@ class Api:
                 raise DocLoadingError("""Could not load data from {0}: {1}
                   - is your server down?
                   - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, e))
-        with open(apifile, 'w') as f:
+        with open(self.apidoc_cache_file, 'w') as f:
             f.write(json.dumps(response))
         return response
 
