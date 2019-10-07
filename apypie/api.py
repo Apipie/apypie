@@ -81,7 +81,7 @@ class Api:
         else:
             return default
 
-    def update_cache(self, cache_name):
+    def validate_cache(self, cache_name):
         if cache_name is not None and cache_name != self.apidoc_cache_name:
             self.clean_cache()
             self.apidoc_cache_name = os.path.basename(os.path.normpath(cache_name))
@@ -219,7 +219,7 @@ class Api:
 
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
-        self.update_cache(request.headers.get('apipie-checksum'))
+        self.validate_cache(request.headers.get('apipie-checksum'))
         if request.status_code == requests.codes.no_content:
             return None
         return request.json()
