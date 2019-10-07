@@ -77,7 +77,7 @@ class Api:
     def _set_default_name(self, default='default'):
         cache_file = next(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), None)
         if cache_file:
-            return os.path.basename(cache_file).replace(self.cache_extension, '')
+            return os.path.basename(cache_file)[:-len(self.cache_extension)]
         else:
             return default
 
