@@ -23,7 +23,11 @@ def api(fixture_dir, requests_mock, tmpdir):
     with fixture_dir.join('dummy.json').open() as read_file:
         data = json.load(read_file)
     requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
-    return apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+    # explicitly trigger loading of the apidoc
+    # our tests often mock Api.http_call, which breaks apidoc loading
+    api.apidoc
+    return api
 
 
 @pytest.fixture
