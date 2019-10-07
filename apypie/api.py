@@ -84,7 +84,7 @@ class Api:
     def update_cache(self, cache_name):
         if cache_name is not None and cache_name != self.apidoc_cache_name:
             self.clean_cache()
-            self.apidoc_cache_name = cache_name
+            self.apidoc_cache_name = os.path.basename(os.path.normpath(cache_name))
 
     def clean_cache(self):
         self._apidoc = None
