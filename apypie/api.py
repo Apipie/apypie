@@ -74,8 +74,11 @@ class Api:
     def apidoc_cache_file(self):
         return os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
 
+    def _cache_dir_contents(self):
+        return glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension)))
+
     def _find_cache_name(self, default='default'):
-        cache_file = next(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), None)
+        cache_file = next(self._cache_dir_contents(), None)
         if cache_file:
             return os.path.basename(cache_file)[:-len(self.cache_extension)]
         else:
@@ -88,7 +91,7 @@ class Api:
 
     def clean_cache(self):
         self._apidoc = None
-        for filename in glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))):
+        for filename in self._cache_dir_contents():
             os.unlink(filename)
 
     @property
