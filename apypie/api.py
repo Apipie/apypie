@@ -49,7 +49,7 @@ class Api:
         apidoc_cache_base_dir = kwargs.get('apidoc_cache_base_dir', os.path.join(os.path.expanduser(xdg_cache_home), 'apypie'))
         apidoc_cache_dir_default = os.path.join(apidoc_cache_base_dir, self.uri.replace(':', '_').replace('/', '_'), 'v{}'.format(self.api_version))
         self.apidoc_cache_dir = kwargs.get('apidoc_cache_dir', apidoc_cache_dir_default)
-        self.apidoc_cache_name = kwargs.get('apidoc_cache_name', self._set_default_name())
+        self.apidoc_cache_name = kwargs.get('apidoc_cache_name', self._find_cache_name())
 
         self._session = requests.Session()
         self._session.verify = kwargs.get('verify_ssl', True)
@@ -74,7 +74,7 @@ class Api:
     def apidoc_cache_file(self):
         return os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
 
-    def _set_default_name(self, default='default'):
+    def _find_cache_name(self, default='default'):
         cache_file = next(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), None)
         if cache_file:
             return os.path.basename(cache_file)[:-len(self.cache_extension)]
