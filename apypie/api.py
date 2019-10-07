@@ -62,7 +62,7 @@ class Api:
         if kwargs.get('username') and kwargs.get('password'):
             self._session.auth = (kwargs['username'], kwargs['password'])
 
-        self._apidoc = self._load_apidoc()
+        self._apidoc = None
 
     @property
     def apidoc(self):

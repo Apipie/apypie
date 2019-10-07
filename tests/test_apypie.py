@@ -14,14 +14,16 @@ def test_init(api):
 def test_init_bad_cachedir(tmpdir):
     bad_cachedir = tmpdir.join('bad')
     bad_cachedir.ensure(file=True)
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=bad_cachedir.strpath)
     with pytest.raises(OSError):
-        apypie.Api(uri='https://api.example.com', apidoc_cache_dir=bad_cachedir.strpath)
+        api.apidoc
 
 
 def test_init_bad_response(requests_mock, tmpdir):
     requests_mock.get('https://api.example.com/apidoc/v1.json', status_code=404)
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
     with pytest.raises(apypie.exceptions.DocLoadingError) as excinfo:
-        apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+        api.apidoc
     assert "Could not load data from https://api.example.com" in str(excinfo.value)
 
 
@@ -45,8 +47,9 @@ def test_init_with_xdg_cachedir(fixture_dir, requests_mock, tmpdir):
     requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
     old_environ = os.environ.copy()
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
-    apypie.Api(uri='https://api.example.com')
+    api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
+    assert api.apidoc
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
 
 
@@ -267,6 +270,7 @@ def test_clean_cache(fixture_dir, requests_mock, tmpdir):
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
+    assert api.apidoc
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
     api.clean_cache()
     assert api._apidoc is None
@@ -281,6 +285,7 @@ def test_validate_cache(fixture_dir, requests_mock, tmpdir):
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
+    assert api.apidoc
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
     api.validate_cache('testcache')
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
@@ -296,6 +301,7 @@ def test_validate_cache_path_traversal(fixture_dir, requests_mock, tmpdir):
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
+    assert api.apidoc
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
     api.validate_cache('../help/testcache')
     assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
