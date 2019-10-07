@@ -75,10 +75,9 @@ class Api:
         return os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
 
     def _set_default_name(self, default='default'):
-        """find the newest file in the cachedir if any"""
-        cache_file = sorted(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), key=os.path.getctime, reverse=True)
+        cache_file = next(glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension))), None)
         if cache_file:
-            return os.path.basename(cache_file[0]).replace(self.cache_extension, '')
+            return os.path.basename(cache_file).replace(self.cache_extension, '')
         else:
             return default
 
