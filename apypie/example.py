@@ -1,7 +1,7 @@
 import re
 
 
-EXAMPLE_PARSER = re.compile(r'(\w+)\s+([^\n]*)\n?(.*)?\n(\d+)\n(.*)', re.DOTALL)
+EXAMPLE_PARSER = re.compile(r'(\w+)\s+([^\n]*)\n?(.*)\n(\d+)\n(.*)', re.DOTALL)
 
 
 class Example:
