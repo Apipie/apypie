@@ -211,7 +211,7 @@ class Api:
                 kwargs['params'] = params
             else:
                 kwargs['json'] = params
-        elif http_method in ['post', 'put', 'patch']:
+        elif http_method in ['post', 'put', 'patch'] and not data and not files:
             kwargs['json'] = {}
 
         if files:
