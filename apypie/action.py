@@ -10,6 +10,14 @@ try:
 except NameError:  # Python 3 has no basestring
     basestring = str  # pylint: disable=W0622
 
+try:
+    from typing import Optional, Any, Iterable, List, TYPE_CHECKING
+except ImportError:
+    TYPE_CHECKING = False
+
+if TYPE_CHECKING:
+    from apypie.api import Api
+
 
 class Action:
     """
@@ -17,31 +25,38 @@ class Action:
     """
 
     def __init__(self, name, resource, api):
+        # type: (str, str, Api) -> None
         self.name = name
         self.resource = resource
         self.api = api
 
     @property
     def apidoc(self):
+        # type: () -> dict
         resource_methods = self.api.apidoc['docs']['resources'][self.resource]['methods']
         return [method for method in resource_methods if method['name'] == self.name][0]
 
     @property
     def routes(self):
+        # type: () -> List[Route]
         return [Route(route['api_url'], route['http_method'], route['short_description']) for route in self.apidoc['apis']]
 
     @property
     def params(self):
+        # type: () -> List[Param]
         return [Param(**param) for param in self.apidoc['params']]
 
     @property
     def examples(self):
+        # type: () -> List[Example]
         return [Example.parse(example) for example in self.apidoc['examples']]
 
     def call(self, params={}, headers={}, options={}, data=None, files=None):
+        # type: (dict, dict, dict, Optional[Any], Optional[dict]) -> dict
         return self.api.call(self.resource, self.name, params, headers, options, data, files)
 
     def find_route(self, params=None):
+        # type: (Optional[dict]) -> Route
         param_keys = set(self.filter_empty_params(params).keys())
         sorted_routes = sorted(self.routes, key=lambda route: [-1 * len(route.params_in_path), route.path])
         for route in sorted_routes:
@@ -49,10 +64,12 @@ class Action:
                 return route
         return sorted_routes[-1]
 
-    def validate(self, values=None, data=None, files=None):
+    def validate(self, values, data=None, files=None):
+        # type: (dict, Optional[Any], Optional[dict]) -> None
         self._validate(self.params, values, data, files)
 
     def _add_to_path(self, path=None, *additions):
+        # type: (Optional[str], str) -> str
         if path is None:
             path = ''
         for addition in additions:
@@ -63,6 +80,7 @@ class Action:
         return path
 
     def _validate(self, params, values, data=None, files=None, path=None):
+        # type: (Iterable[Param], dict, Optional[Any], Optional[dict], Optional[str]) -> None
         given_params = set(self.filter_empty_params(values).keys())
         given_files = set((files or {}).keys())
         given_data = set((data or {}).keys())
@@ -80,7 +98,7 @@ class Action:
                 if param_description.params and value is not None:
                     if param_description.expected_type == 'array':
                         for num, item in enumerate(value):
-                            self._validate(param_description.params, item, path=self._add_to_path(path, param_description.name, num))
+                            self._validate(param_description.params, item, path=self._add_to_path(path, param_description.name, str(num)))
                     elif param_description.expected_type == 'hash':
                         self._validate(param_description.params, value, path=self._add_to_path(path, param_description.name))
                 if (param_description.expected_type == 'numeric' and isinstance(value, basestring)):
@@ -95,6 +113,7 @@ class Action:
                     raise ValueError("{} ({}): {}".format(param, value, param_description.validator))
 
     def filter_empty_params(self, params=None):
+        # type: (Optional[dict]) -> dict
         if params is not None:
             if isinstance(params, dict):
                 return dict((k, v) for k, v in params.items() if v is not None)
@@ -104,6 +123,7 @@ class Action:
             return {}
 
     def prepare_params(self, input_dict):
+        # type: (dict) -> dict
         """
         Transform a dict with data into one that can be accepted as params for calling the action.
 
@@ -122,6 +142,7 @@ class Action:
         return self._prepare_params(self.params, input_dict)
 
     def _prepare_params(self, action_params, input_dict):
+        # type: (Iterable[Param], dict) -> dict
         result = {}
 
         for param in action_params:
