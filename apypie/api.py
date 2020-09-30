@@ -5,13 +5,18 @@ import glob
 import json
 import os
 try:
-    from urlparse import urljoin
+    from urlparse import urljoin  # type: ignore
 except ImportError:
-    from urllib.parse import urljoin
+    from urllib.parse import urljoin  # type: ignore
 import requests
 
 from apypie.resource import Resource
 from apypie.exceptions import DocLoadingError
+
+try:
+    from typing import Iterable
+except ImportError:
+    pass
 
 
 class Api:
@@ -66,15 +71,18 @@ class Api:
 
     @property
     def apidoc(self):
+        # type: () -> dict
         if self._apidoc is None:
             self._apidoc = self._load_apidoc()
         return self._apidoc
 
     @property
     def apidoc_cache_file(self):
+        # type: () -> str
         return os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
 
     def _cache_dir_contents(self):
+        # type: () -> Iterable[str]
         return glob.iglob(os.path.join(self.apidoc_cache_dir, '*{}'.format(self.cache_extension)))
 
     def _find_cache_name(self, default='default'):
@@ -85,17 +93,20 @@ class Api:
             return default
 
     def validate_cache(self, cache_name):
+        # type: (str) -> None
         if cache_name is not None and cache_name != self.apidoc_cache_name:
             self.clean_cache()
             self.apidoc_cache_name = os.path.basename(os.path.normpath(cache_name))
 
     def clean_cache(self):
+        # type: () -> None
         self._apidoc = None
         for filename in self._cache_dir_contents():
             os.unlink(filename)
 
     @property
     def resources(self):
+        # type: () -> Iterable
         """List of available resources.
 
         Usage::
@@ -106,6 +117,7 @@ class Api:
         return sorted(self.apidoc['docs']['resources'].keys())
 
     def resource(self, name):
+        # type: (str) -> Resource
         """
         Get a resource.
 
@@ -124,6 +136,7 @@ class Api:
             raise KeyError(message)
 
     def _load_apidoc(self):
+        # type: () -> dict
         try:
             with open(self.apidoc_cache_file, 'r') as f:
                 api_doc = json.load(f)
@@ -132,6 +145,7 @@ class Api:
         return api_doc
 
     def _retrieve_apidoc(self):
+        # type: () -> dict
         try:
             os.makedirs(self.apidoc_cache_dir)
         except OSError as err:
