@@ -81,7 +81,9 @@ class Action:
 
     def _validate(self, params, values, data=None, files=None, path=None):
         # type: (Iterable[Param], dict, Optional[Any], Optional[dict], Optional[str]) -> None
-        given_params = set(self.filter_empty_params(values).keys())
+        if not isinstance(values, dict):
+            raise InvalidArgumentTypesError
+        given_params = set(values.keys())
         given_files = set((files or {}).keys())
         given_data = set((data or {}).keys())
         required_params = set([param.name for param in params if param.required])
@@ -107,9 +109,10 @@ class Action:
                     except ValueError:
                         # this will be caught in the next check
                         pass
-                if ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
-                        or (param_description.expected_type == 'numeric' and not isinstance(value, int))
-                        or (param_description.expected_type == 'string' and not isinstance(value, (basestring, int)))):
+                if (value is not None
+                        and ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
+                             or (param_description.expected_type == 'numeric' and not isinstance(value, int))
+                             or (param_description.expected_type == 'string' and not isinstance(value, (basestring, int))))):
                     raise ValueError("{} ({}): {}".format(param, value, param_description.validator))
 
     def filter_empty_params(self, params=None):
