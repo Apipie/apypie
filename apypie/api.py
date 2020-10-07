@@ -19,7 +19,7 @@ except ImportError:
     pass
 
 
-class Api:
+class Api(object):
     """
     Apipie API bindings
 
