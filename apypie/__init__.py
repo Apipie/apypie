@@ -1,3 +1,7 @@
+"""
+Apypie - Apipie bindings for Python
+"""
+
 from __future__ import print_function, absolute_import
 
 from apypie.resource import Resource
