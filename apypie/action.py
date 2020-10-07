@@ -116,7 +116,7 @@ class Action:
         # type: (Optional[dict]) -> dict
         if params is not None:
             if isinstance(params, dict):
-                return dict((k, v) for k, v in params.items() if v is not None)
+                return {k: v for k, v in params.items() if v is not None}
             else:
                 raise InvalidArgumentTypesError
         else:

@@ -204,7 +204,7 @@ class Api:
 
     def _call_action(self, action, params={}, headers={}, data=None, files=None):
         route = action.find_route(params)
-        get_params = dict((key, value) for key, value in params.items() if key not in route.params_in_path)
+        get_params = {key: value for key, value in params.items() if key not in route.params_in_path}
         return self.http_call(
             route.method,
             route.path_with_params(params),
