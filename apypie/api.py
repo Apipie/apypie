@@ -1,3 +1,7 @@
+"""
+Apypie Api module
+"""
+
 from __future__ import print_function, absolute_import
 
 import errno
@@ -14,7 +18,7 @@ from apypie.resource import Resource
 from apypie.exceptions import DocLoadingError
 
 try:
-    from typing import Iterable
+    from typing import Iterable  # pylint: disable=unused-import
 except ImportError:
     pass
 
@@ -72,6 +76,14 @@ class Api(object):
     @property
     def apidoc(self):
         # type: () -> dict
+        """
+        The full apidoc.
+
+        The apidoc will be fetched from the server, if that didn't happen yet.
+
+        :returns: The apidoc.
+        """
+
         if self._apidoc is None:
             self._apidoc = self._load_apidoc()
         return self._apidoc
@@ -79,6 +91,10 @@ class Api(object):
     @property
     def apidoc_cache_file(self):
         # type: () -> str
+        """
+        Full local path to the cached apidoc.
+        """
+
         return os.path.join(self.apidoc_cache_dir, '{0}{1}'.format(self.apidoc_cache_name, self.cache_extension))
 
     def _cache_dir_contents(self):
@@ -87,19 +103,29 @@ class Api(object):
 
     def _find_cache_name(self, default='default'):
         cache_file = next(self._cache_dir_contents(), None)
+        cache_name = default
         if cache_file:
-            return os.path.basename(cache_file)[:-len(self.cache_extension)]
-        else:
-            return default
+            cache_name = os.path.basename(cache_file)[:-len(self.cache_extension)]
+        return cache_name
 
     def validate_cache(self, cache_name):
         # type: (str) -> None
+        """
+        Ensure the cached apidoc matches the one presented by the server.
+
+        :param cache_name: The name of the apidoc on the server.
+        """
+
         if cache_name is not None and cache_name != self.apidoc_cache_name:
             self.clean_cache()
             self.apidoc_cache_name = os.path.basename(os.path.normpath(cache_name))
 
     def clean_cache(self):
         # type: () -> None
+        """
+        Remove any locally cached apidocs.
+        """
+
         self._apidoc = None
         for filename in self._cache_dir_contents():
             os.unlink(filename)
@@ -107,7 +133,8 @@ class Api(object):
     @property
     def resources(self):
         # type: () -> Iterable
-        """List of available resources.
+        """
+        List of available resources.
 
         Usage::
 
@@ -131,15 +158,14 @@ class Api(object):
         """
         if name in self.resources:
             return Resource(self, name)
-        else:
-            message = "Resource '{}' does not exist in the API. Existing resources: {}".format(name, ', '.join(sorted(self.resources)))
-            raise KeyError(message)
+        message = "Resource '{}' does not exist in the API. Existing resources: {}".format(name, ', '.join(sorted(self.resources)))
+        raise KeyError(message)
 
     def _load_apidoc(self):
         # type: () -> dict
         try:
-            with open(self.apidoc_cache_file, 'r') as f:
-                api_doc = json.load(f)
+            with open(self.apidoc_cache_file, 'r') as apidoc_file:
+                api_doc = json.load(apidoc_file)
         except IOError:
             api_doc = self._retrieve_apidoc()
         return api_doc
@@ -160,22 +186,22 @@ class Api(object):
         if not response:
             try:
                 response = self._retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
-            except Exception as e:
+            except Exception as exc:
                 raise DocLoadingError("""Could not load data from {0}: {1}
                   - is your server down?
-                  - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, e))
-        with open(self.apidoc_cache_file, 'w') as f:
-            f.write(json.dumps(response))
+                  - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, exc))
+        with open(self.apidoc_cache_file, 'w') as apidoc_file:
+            apidoc_file.write(json.dumps(response))
         return response
 
     def _retrieve_apidoc_call(self, path, safe=False):
         try:
             return self.http_call('get', path)
-        except Exception:
+        except requests.exceptions.HTTPError:
             if not safe:
                 raise
 
-    def call(self, resource_name, action_name, params={}, headers={}, options={}, data=None, files=None):
+    def call(self, resource_name, action_name, params=None, headers=None, options=None, data=None, files=None):  # pylint: disable=too-many-arguments
         """
         Call an action in the API.
 
@@ -184,10 +210,12 @@ class Api(object):
 
         :param resource_name: name of the resource
         :param action_name: action_name name of the action
-        :param params: Dict of parameters to be send in the request
-        :param headers: Dict of headers to be send in the request
+        :param params: Dict of parameters to be sent in the request
+        :param headers: Dict of headers to be sent in the request
         :param options: Dict of options to influence the how the call is processed
            * `skip_validation` (Bool) *false* - skip validation of parameters
+        :param data: Binary data to be sent in the request
+        :param files: Binary files to be sent in the request
         :return: :class:`dict` object
         :rtype: dict
 
@@ -195,6 +223,11 @@ class Api(object):
 
             >>> api.call('users', 'show', {'id': 1})
         """
+        if options is None:
+            options = {}
+        if params is None:
+            params = {}
+
         resource = Resource(self, resource_name)
         action = resource.action(action_name)
         if not options.get('skip_validation', False):
@@ -202,7 +235,10 @@ class Api(object):
 
         return self._call_action(action, params, headers, data, files)
 
-    def _call_action(self, action, params={}, headers={}, data=None, files=None):
+    def _call_action(self, action, params=None, headers=None, data=None, files=None):  # pylint: disable=too-many-arguments
+        if params is None:
+            params = {}
+
         route = action.find_route(params)
         get_params = {key: value for key, value in params.items() if key not in route.params_in_path}
         return self.http_call(
@@ -211,7 +247,19 @@ class Api(object):
             get_params,
             headers, data, files)
 
-    def http_call(self, http_method, path, params=None, headers=None, data=None, files=None):
+    def http_call(self, http_method, path, params=None, headers=None, data=None, files=None):  # pylint: disable=too-many-arguments
+        """
+        Execute an HTTP request.
+
+        :param params: Dict of parameters to be sent in the request
+        :param headers: Dict of headers to be sent in the request
+        :param data: Binary data to be sent in the request
+        :param files: Binary files to be sent in the request
+
+        :return: :class:`dict` object
+        :rtype: dict
+        """
+
         full_path = urljoin(self.uri, path)
         kwargs = {
             'verify': self._session.verify,
@@ -237,12 +285,18 @@ class Api(object):
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
         self.validate_cache(request.headers.get('apipie-checksum'))
-        if request.status_code == requests.codes.no_content:
+        if request.status_code == requests.codes['no_content']:
             return None
         return request.json()
 
     @property
     def cache_extension(self):
+        """
+        File extension for the local cache file.
+
+        Will include the language if set.
+        """
+
         if self.language:
             ext = '.{}.json'.format(self.language)
         else:
