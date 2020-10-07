@@ -1,9 +1,13 @@
+"""
+Apypie Param module
+"""
+
 import re
 
 HTML_STRIP = re.compile(r'<\/?[^>]+?>')
 
 
-class Param:
+class Param(object):  # pylint: disable=too-many-instance-attributes,too-few-public-methods
     """
     Apipie Param
     """
