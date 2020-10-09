@@ -109,7 +109,9 @@ class Action:
                     except ValueError:
                         # this will be caught in the next check
                         pass
-                if (value is not None
+                if (not param_description.allow_nil and value is None):
+                    raise ValueError("{} can't be {}".format(param, value))
+                elif (value is not None
                         and ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
                              or (param_description.expected_type == 'numeric' and not isinstance(value, int))
                              or (param_description.expected_type == 'string' and not isinstance(value, (basestring, int))))):
