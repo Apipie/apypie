@@ -161,9 +161,16 @@ def test_action_validate_valid_string_as_int(resource):
     action.validate({'user': {'name': 1}})
 
 
-def test_action_validate_valid_none(resource):
+def test_action_validate_valid_none(foreman_api):
+    action = foreman_api.resource('domains').action('update')
+    action.validate({'id': 1, 'domain': {'dns_id': None}})
+
+
+def test_action_validate_invalid_none(resource):
     action = resource.action('create')
-    action.validate({'user': {'name': None}})
+    with pytest.raises(ValueError) as excinfo:
+        action.validate({'user': {'name': None}})
+    assert "name can't be None" in str(excinfo.value)
 
 
 def test_action_validate_files(resource):
