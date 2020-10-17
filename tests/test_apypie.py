@@ -136,6 +136,11 @@ def test_http_call_get(api, requests_mock):
     api.http_call('get', '/')
 
 
+def test_http_call_get_querystring(api, requests_mock):
+    requests_mock.get('https://api.example.com/?flag=true', text='{}')
+    api.http_call('get', '/', params={'flag': True})
+
+
 def test_http_call_get_headers(api, requests_mock):
     headers = {'X-Apypie-Test': 'Awesome'}
     expected_headers = {

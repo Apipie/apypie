@@ -18,9 +18,16 @@ from apypie.resource import Resource
 from apypie.exceptions import DocLoadingError
 
 try:
-    from typing import Iterable  # pylint: disable=unused-import
+    from typing import Any, Iterable  # pylint: disable=unused-import
 except ImportError:
     pass
+
+
+def _qs_param(param):
+    # type: (Any) -> Any
+    if isinstance(param, bool):
+        return str(param).lower()
+    return param
 
 
 class Api(object):
@@ -270,7 +277,7 @@ class Api(object):
 
         if params:
             if http_method in ['get', 'head']:
-                kwargs['params'] = params
+                kwargs['params'] = {k: _qs_param(v) for k, v in params.items()}
             else:
                 kwargs['json'] = params
         elif http_method in ['post', 'put', 'patch'] and not data and not files:
