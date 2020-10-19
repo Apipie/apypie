@@ -10,12 +10,9 @@ from setuptools import setup, find_packages
 with open(path.join(path.abspath(path.dirname(__file__)), 'README.md'), encoding='utf-8') as f:
     LONG_DESCRIPTION = f.read()
 
-# Arguments marked as "Required" below must be included for upload to PyPI.
-# Fields marked as "Optional" may be commented out.
-
 setup(
     name='apypie',
-    version='0.2.2',
+    version='0.3.0',
     description='Apipie bindings for Python',
     license='MIT',
     long_description=LONG_DESCRIPTION,
