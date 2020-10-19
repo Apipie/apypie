@@ -208,6 +208,7 @@ def test_action_validate_full_correct_params(resource):
 @pytest.mark.parametrize('resource,action,input_dict,expected_params', [
     ('comments', 'archive', {'id': 1}, {'id': 1}),
     ('comments', 'archive', {'id': 1, 'should_be_ignored': True}, {'id': 1}),
+    ('comments', 'show', {'id': 1, 'post_id': 13, 'user_id': 666}, {'id': 1, 'post_id': 13, 'user_id': 666}),
     ('users', 'create', {'name': 'testuser'}, {'user': {'name': 'testuser'}}),
 ])
 def test_action_prepare_params(api, resource, action, input_dict, expected_params):
