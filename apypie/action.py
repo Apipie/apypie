@@ -212,7 +212,10 @@ class Action(object):
             >>> action.prepare_params({'id': 1})
             {'user': {'id': 1}}
         """
-        return self._prepare_params(self.params, input_dict)
+        params = self._prepare_params(self.params, input_dict)
+        route_params = self._prepare_route_params(self.find_route(input_dict), input_dict)
+        params.update(route_params)
+        return params
 
     def _prepare_params(self, action_params, input_dict):
         # type: (Iterable[Param], dict) -> dict
@@ -225,5 +228,16 @@ class Action(object):
                     result[param.name] = nested_result
             elif param.name in input_dict:
                 result[param.name] = input_dict[param.name]
+
+        return result
+
+    @staticmethod
+    def _prepare_route_params(route, input_dict):
+        # type: (Route, dict) -> dict
+        result = {}
+
+        for url_param in route.params_in_path:
+            if url_param in input_dict:
+                result[url_param] = input_dict[url_param]
 
         return result
