@@ -213,7 +213,7 @@ class Action(object):
             {'user': {'id': 1}}
         """
         params = self._prepare_params(self.params, input_dict)
-        route_params = self._prepare_route_params(self.find_route(input_dict), input_dict)
+        route_params = self._prepare_route_params(input_dict)
         params.update(route_params)
         return params
 
@@ -231,10 +231,11 @@ class Action(object):
 
         return result
 
-    @staticmethod
-    def _prepare_route_params(route, input_dict):
-        # type: (Route, dict) -> dict
+    def _prepare_route_params(self, input_dict):
+        # type: (dict) -> dict
         result = {}
+
+        route = self.find_route(input_dict)
 
         for url_param in route.params_in_path:
             if url_param in input_dict:
