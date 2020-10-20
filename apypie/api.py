@@ -7,6 +7,10 @@ from __future__ import print_function, absolute_import
 import errno
 import glob
 import json
+try:
+    from json.decoder import JSONDecodeError  # type: ignore
+except ImportError:
+    JSONDecodeError = ValueError  # type: ignore
 import os
 try:
     from urlparse import urljoin  # type: ignore
@@ -173,7 +177,7 @@ class Api(object):
         try:
             with open(self.apidoc_cache_file, 'r') as apidoc_file:
                 api_doc = json.load(apidoc_file)
-        except IOError:
+        except (IOError, JSONDecodeError):
             api_doc = self._retrieve_apidoc()
         return api_doc
 
