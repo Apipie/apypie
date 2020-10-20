@@ -58,8 +58,7 @@ def preserve_environ():
         os.environ = old_environ
 
 
-@pytest.mark.usefixtures("preserve_environ")
 @pytest.fixture
-def tmp_xdg_cache_home(tmpdir):
+def tmp_xdg_cache_home(preserve_environ, tmpdir):
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
-    yield
+    return tmpdir
