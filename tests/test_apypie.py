@@ -58,7 +58,7 @@ def test_init_with_xdg_cachedir(fixture_dir, requests_mock, tmpdir):
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
     assert api.apidoc
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(file=1)
 
 
 def test_init_with_existing_cachedir(fixture_dir, requests_mock, tmpdir):
@@ -69,7 +69,7 @@ def test_init_with_existing_cachedir(fixture_dir, requests_mock, tmpdir):
     old_environ = os.environ.copy()
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
 
-    json_path = tmpdir.join('apypie/https___api.example.com/v1/deadc0ffee.json')
+    json_path = tmpdir.join('apypie', 'https___api.example.com', 'v1', 'deadc0ffee.json')
     json_path.ensure(file=True)
     fixture_dir.join('dummy.json').copy(json_path)
 
@@ -77,7 +77,7 @@ def test_init_with_existing_cachedir(fixture_dir, requests_mock, tmpdir):
     os.environ = old_environ
 
     assert json_path.check(file=1)
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
 
 
 def test_init_with_bad_cache(fixture_dir, requests_mock, tmpdir):
@@ -88,7 +88,7 @@ def test_init_with_bad_cache(fixture_dir, requests_mock, tmpdir):
     old_environ = os.environ.copy()
     os.environ['XDG_CACHE_HOME'] = tmpdir.strpath
 
-    json_path = tmpdir.join('apypie/https___api.example.com/v1/deadc0ffee.json')
+    json_path = tmpdir.join('apypie', 'https___api.example.com', 'v1', 'deadc0ffee.json')
     json_path.ensure(file=True)
     json_path.write('BAD JSON')
 
@@ -97,7 +97,7 @@ def test_init_with_bad_cache(fixture_dir, requests_mock, tmpdir):
     os.environ = old_environ
 
     assert json_path.check(file=1)
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
 
 
 @pytest.mark.parametrize('username,password,expected', [
@@ -229,8 +229,8 @@ def test_http_call_get_headers_cache(fixture_dir, requests_mock, tmpdir):
 
     os.environ = old_environ
 
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
-    assert tmpdir.join('apypie/https___api.example.com/v1/c0ffeec0ffee.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'c0ffeec0ffee.json').check(file=1)
 
 
 def test_http_call_get_with_params(api, requests_mock):
@@ -304,10 +304,10 @@ def test_clean_cache(fixture_dir, requests_mock, tmpdir):
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
     assert api.apidoc
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(file=1)
     api.clean_cache()
     assert api._apidoc is None
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
 
 
 def test_validate_cache(fixture_dir, requests_mock, tmpdir):
@@ -319,11 +319,11 @@ def test_validate_cache(fixture_dir, requests_mock, tmpdir):
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
     assert api.apidoc
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(file=1)
     api.validate_cache('testcache')
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
     assert api.apidoc
-    assert tmpdir.join('apypie/https___api.example.com/v1/testcache.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'testcache.json').check(file=1)
 
 
 def test_validate_cache_path_traversal(fixture_dir, requests_mock, tmpdir):
@@ -335,8 +335,8 @@ def test_validate_cache_path_traversal(fixture_dir, requests_mock, tmpdir):
     api = apypie.Api(uri='https://api.example.com')
     os.environ = old_environ
     assert api.apidoc
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(file=1)
     api.validate_cache('../help/testcache')
-    assert tmpdir.join('apypie/https___api.example.com/v1/default.json').check(exists=0)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
     assert api.apidoc
-    assert tmpdir.join('apypie/https___api.example.com/v1/testcache.json').check(file=1)
+    assert tmpdir.join('apypie', 'https___api.example.com', 'v1', 'testcache.json').check(file=1)
