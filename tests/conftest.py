@@ -1,4 +1,5 @@
 import json
+import os
 
 import py.path
 import pytest
@@ -46,3 +47,12 @@ def foreman_api(fixture_dir, requests_mock, tmpdir):
         data = json.load(read_file)
     requests_mock.get('https://foreman.example.com/apidoc/v2.json', json=data)
     return apypie.Api(uri='https://foreman.example.com', api_version=2, apidoc_cache_dir=tmpdir.strpath)
+
+
+@pytest.fixture
+def preserve_environ():
+    old_environ = os.environ.copy()
+    try:
+        yield
+    finally:
+        os.environ = old_environ
