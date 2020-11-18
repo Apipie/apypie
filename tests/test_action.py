@@ -223,3 +223,11 @@ def test_action_prepare_params_hash_no_nested_params(foreman_api):
     expected_params = {'compute_profile_id': 1, 'compute_resource_id': 1, 'compute_attribute': {'vm_attrs': {'some_attr': 'value'}}}
     generated_params = action.prepare_params(input_dict)
     assert expected_params == generated_params
+
+
+def test_action_prepare_params_hash_of_hashes(luna_api):
+    action = luna_api.resource('job_invocations').action('create')
+    input_dict = {'bookmark_id': 10, 'job_template_id': 177, 'recurrence': {'cron_line': '30 2 * * *'}, 'concurrency_control': {'concurrency_level': 2}, 'targeting_type': 'static_query', 'inputs': {'command': 'pwd'}}
+    expected_params = {'job_invocation': {'bookmark_id': 10, 'job_template_id': 177, 'recurrence': {'cron_line': '30 2 * * *'}, 'concurrency_control': {'concurrency_level': 2}, 'targeting_type': 'static_query', 'inputs': {'command': 'pwd'}}}
+    generated_params = action.prepare_params(input_dict)
+    assert expected_params == generated_params
