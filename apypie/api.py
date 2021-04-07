@@ -211,6 +211,7 @@ class Api(object):
         except requests.exceptions.HTTPError:
             if not safe:
                 raise
+            return None
 
     def call(self, resource_name, action_name, params=None, headers=None, options=None, data=None, files=None):  # pylint: disable=too-many-arguments
         """
