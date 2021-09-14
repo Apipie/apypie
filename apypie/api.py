@@ -175,7 +175,7 @@ class Api(object):
     def _load_apidoc(self):
         # type: () -> dict
         try:
-            with open(self.apidoc_cache_file, 'r') as apidoc_file:
+            with open(self.apidoc_cache_file, 'r') as apidoc_file:  # pylint:disable=unspecified-encoding
                 api_doc = json.load(apidoc_file)
         except (IOError, JSONDecodeError):
             api_doc = self._retrieve_apidoc()
@@ -201,7 +201,7 @@ class Api(object):
                 raise DocLoadingError("""Could not load data from {0}: {1}
                   - is your server down?
                   - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, exc))
-        with open(self.apidoc_cache_file, 'w') as apidoc_file:
+        with open(self.apidoc_cache_file, 'w') as apidoc_file:  # pylint:disable=unspecified-encoding
             apidoc_file.write(json.dumps(response))
         return response
 
