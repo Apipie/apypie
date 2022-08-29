@@ -199,8 +199,7 @@ class Api(object):
                 response = self._retrieve_apidoc_call('/apidoc/v{}.json'.format(self.api_version))
             except Exception as exc:
                 raise DocLoadingError("""Could not load data from {0}: {1}
-                  - is your server down?
-                  - was rake apipie:cache run when using apipie cache? (typical production settings)""".format(self.uri, exc))
+                  - is your server down?""".format(self.uri, exc))
         with open(self.apidoc_cache_file, 'w') as apidoc_file:  # pylint:disable=all
             apidoc_file.write(json.dumps(response))
         return response
