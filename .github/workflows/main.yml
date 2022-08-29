@@ -28,6 +28,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python }}
+      - name: prepare a redhat-uep.pem, even if we run on Ubuntu
+        run: sudo mkdir -p /etc/rhsm/ca/ && sudo curl -o /etc/rhsm/ca/redhat-uep.pem https://ftp.redhat.com/redhat/convert2rhel/redhat-uep.pem
       - name: Install dependencies
         run: pip install tox tox-gh-actions
       - name: Run tests
