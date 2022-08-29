@@ -10,7 +10,7 @@ from apypie.param import Param
 from apypie.exceptions import MissingArgumentsError, InvalidArgumentTypesError
 
 try:
-    basestring
+    basestring  # pylint: disable=used-before-assignment
 except NameError:  # Python 3 has no basestring
     basestring = str  # pylint: disable=invalid-name,redefined-builtin
 
