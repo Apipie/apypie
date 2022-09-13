@@ -137,6 +137,7 @@ class Inflector(object):
         self.inflections.irregular('person', 'people')
         self.inflections.irregular('self', 'selves')
         self.inflections.irregular('sex', 'sexes')
+        self.inflections.irregular('erratum', 'errata')
 
         self.inflections.uncountable('equipment', 'information', 'money', 'species', 'series', 'fish', 'sheep', 'police')
 
