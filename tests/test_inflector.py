@@ -10,3 +10,4 @@ def test_inflector():
     assert inflector.pluralize('gpg_key') == 'gpg_keys'
     assert inflector.pluralize('equipment') == 'equipment'
     assert inflector.pluralize('medium') == 'media'
+    assert inflector.singularize('errata') == 'erratum'
