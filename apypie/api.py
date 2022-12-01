@@ -22,7 +22,8 @@ from apypie.resource import Resource
 from apypie.exceptions import DocLoadingError
 
 try:
-    from typing import Any, Iterable  # pylint: disable=unused-import
+    from typing import Any, Iterable, Optional  # pylint: disable=unused-import
+    from apypie.action import Action  # pylint: disable=unused-import
 except ImportError:
     pass
 
@@ -119,8 +120,8 @@ class Api(object):
             cache_name = os.path.basename(cache_file)[:-len(self.cache_extension)]
         return cache_name
 
-    def validate_cache(self, cache_name):
-        # type: (str) -> None
+    def validate_cache(self, cache_name=None):
+        # type: (Optional[str]) -> None
         """
         Ensure the cached apidoc matches the one presented by the server.
 
@@ -200,11 +201,14 @@ class Api(object):
             except Exception as exc:
                 raise DocLoadingError("""Could not load data from {0}: {1}
                   - is your server down?""".format(self.uri, exc))
+        if not response:
+            raise DocLoadingError("""Could not load data from {0}""".format(self.uri))
         with open(self.apidoc_cache_file, 'w') as apidoc_file:  # pylint:disable=all
             apidoc_file.write(json.dumps(response))
         return response
 
     def _retrieve_apidoc_call(self, path, safe=False):
+        # type: (str, bool) -> Optional[dict]
         try:
             return self.http_call('get', path)
         except requests.exceptions.HTTPError:
@@ -213,6 +217,7 @@ class Api(object):
             return None
 
     def call(self, resource_name, action_name, params=None, headers=None, options=None, data=None, files=None):  # pylint: disable=too-many-arguments
+        # type: (str, str, Optional[dict], Optional[dict], Optional[dict], Optional[dict], Optional[dict]) -> Optional[dict]
         """
         Call an action in the API.
 
@@ -247,6 +252,7 @@ class Api(object):
         return self._call_action(action, params, headers, data, files)
 
     def _call_action(self, action, params=None, headers=None, data=None, files=None):  # pylint: disable=too-many-arguments
+        # type: (Action, Optional[dict], Optional[dict], Optional[dict], Optional[dict]) -> Optional[dict]
         if params is None:
             params = {}
 
@@ -259,6 +265,7 @@ class Api(object):
             headers, data, files)
 
     def http_call(self, http_method, path, params=None, headers=None, data=None, files=None):  # pylint: disable=too-many-arguments
+        # type: (str, str, Optional[dict], Optional[dict], Optional[dict], Optional[dict]) -> Optional[dict]
         """
         Execute an HTTP request.
 
@@ -302,6 +309,7 @@ class Api(object):
 
     @property
     def cache_extension(self):
+        # type: () -> str
         """
         File extension for the local cache file.
 

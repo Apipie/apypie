@@ -57,7 +57,7 @@ class Resource(object):
         return name in self.actions
 
     def call(self, action, params=None, headers=None, options=None, data=None, files=None):  # pylint: disable=too-many-arguments
-        # type: (str, Optional[dict], Optional[dict], Optional[dict], Optional[Any], Optional[dict]) -> dict
+        # type: (str, Optional[dict], Optional[dict], Optional[dict], Optional[Any], Optional[dict]) -> Optional[dict]
         """
         Call the API to execute an action for this resource.
 
