@@ -80,7 +80,7 @@ class Action(object):
         return [Example.parse(example) for example in self.apidoc['examples']]
 
     def call(self, params=None, headers=None, options=None, data=None, files=None):  # pylint: disable=too-many-arguments
-        # type: (Optional[dict], Optional[dict], Optional[dict], Optional[Any], Optional[dict]) -> dict
+        # type: (Optional[dict], Optional[dict], Optional[dict], Optional[Any], Optional[dict]) -> Optional[dict]
         """
         Call the API to execute the action.
 
