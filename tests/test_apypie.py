@@ -2,6 +2,7 @@
 import pytest
 
 import apypie
+import requests
 import json
 
 
@@ -314,3 +315,15 @@ def test_validate_cache_path_traversal(fixture_dir, requests_mock, tmp_xdg_cache
     assert tmp_xdg_cache_home.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
     assert api.apidoc
     assert tmp_xdg_cache_home.join('apypie', 'https___api.example.com', 'v1', 'testcache.json').check(file=1)
+
+
+def test_custom_session(fixture_dir, requests_mock, tmpdir):
+    headers = {'X-Apypie-Test': 'Custom'}
+
+    my_session = requests.Session()
+    my_session.headers = headers
+
+    my_api = apypie.Api(uri='https://api.example.com', session=my_session)
+
+    requests_mock.get('https://api.example.com/', request_headers=headers, text='{}')
+    my_api.http_call('get', '/')
