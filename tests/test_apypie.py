@@ -31,7 +31,8 @@ def test_init_with_lang(fixture_dir, requests_mock, tmpdir):
     with fixture_dir.join('dummy.json').open() as read_file:
         data = json.load(read_file)
     requests_mock.get('https://api.example.com/apidoc/v1.tlh.json', json=data)
-    apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh')
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh')
+    assert api.apidoc
 
 
 def test_init_with_missing_lang(fixture_dir, requests_mock, tmpdir):
@@ -39,7 +40,8 @@ def test_init_with_missing_lang(fixture_dir, requests_mock, tmpdir):
         data = json.load(read_file)
     requests_mock.get('https://api.example.com/apidoc/v1.tlh.json', status_code=404)
     requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
-    apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh')
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh')
+    assert api.apidoc
 
 
 def test_init_with_lang_family(fixture_dir, requests_mock, tmpdir):
@@ -47,7 +49,8 @@ def test_init_with_lang_family(fixture_dir, requests_mock, tmpdir):
         data = json.load(read_file)
     requests_mock.get('https://api.example.com/apidoc/v1.tlh_EN.json', status_code=404)
     requests_mock.get('https://api.example.com/apidoc/v1.tlh.json', json=data)
-    apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh_EN')
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, language='tlh_EN')
+    assert api.apidoc
 
 
 def test_init_with_xdg_cachedir(fixture_dir, requests_mock, tmp_xdg_cache_home):
