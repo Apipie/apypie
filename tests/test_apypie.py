@@ -71,7 +71,8 @@ def test_init_with_existing_cachedir(fixture_dir, requests_mock, tmp_xdg_cache_h
     json_path.ensure(file=True)
     fixture_dir.join('dummy.json').copy(json_path)
 
-    apypie.Api(uri='https://api.example.com')
+    api = apypie.Api(uri='https://api.example.com')
+    api.apidoc
 
     assert json_path.check(file=1)
     assert tmp_xdg_cache_home.join('apypie', 'https___api.example.com', 'v1', 'default.json').check(exists=0)
