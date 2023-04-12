@@ -28,6 +28,9 @@ except ImportError:
     pass
 
 
+NO_CONTENT = 204
+
+
 def _qs_param(param):
     # type: (Any) -> Any
     if isinstance(param, bool):
@@ -304,7 +307,7 @@ class Api(object):
         request = self._session.request(http_method, full_path, **kwargs)
         request.raise_for_status()
         self.validate_cache(request.headers.get('apipie-checksum'))
-        if request.status_code == requests.codes['no_content']:
+        if request.status_code == NO_CONTENT:
             return None
         return request.json()
 
