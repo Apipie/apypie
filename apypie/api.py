@@ -215,7 +215,7 @@ class Api(object):
         # type: (str, bool) -> Optional[dict]
         try:
             return self.http_call('get', path)
-        except requests.exceptions.HTTPError:
+        except Exception:
             if not safe:
                 raise
             return None
