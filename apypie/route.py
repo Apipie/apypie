@@ -5,6 +5,11 @@ Apypie Route module
 from __future__ import print_function, absolute_import
 
 try:
+    from urllib.parse import quote  # type: ignore
+except ImportError:
+    from urllib import quote  # type: ignore
+
+try:
     from typing import List, Optional  # pylint: disable=unused-import
 except ImportError:
     pass
@@ -42,7 +47,7 @@ class Route(object):
         if params is not None:
             for param in self.params_in_path:
                 if param in params:
-                    result = result.replace(':{}'.format(param), str(params[param]))
+                    result = result.replace(':{}'.format(param), quote(str(params[param]), safe=''))
                 else:
                     raise KeyError("missing param '{}' in parameters".format(param))
         return result

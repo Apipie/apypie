@@ -23,6 +23,10 @@ def test_route_path_with_params_fill(route):
     assert '/api/architectures/1' == route.path_with_params({'id': 1})
 
 
+def test_route_path_with_escaped_params(route):
+    assert r'/api/architectures/nested%2Fid' == route.path_with_params({'id': 'nested/id'})
+
+
 def test_route_path_with_params_fill_wrong(route):
     with pytest.raises(KeyError) as excinfo:
         route.path_with_params({'wrong': 1})
