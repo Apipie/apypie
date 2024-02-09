@@ -10,17 +10,20 @@ env:
 jobs:
   build:
     runs-on: ubuntu-20.04
+    container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
         python:
-          - "2.7"
           - "3.6"
           - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
+        include:
+          - python: "2.7"
+            container: "python:2.7"
     env:
       PYTHON: ${{ matrix.python }}
     steps:
@@ -29,6 +32,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
+        if: matrix.container == null
+      - name: Install sudo
+        run: apt-get update && apt-get install -y sudo
+        if: matrix.container != null
       - name: prepare a redhat-uep.pem, even if we run on Ubuntu
         run: sudo mkdir -p /etc/rhsm/ca/ && sudo curl -o /etc/rhsm/ca/redhat-uep.pem https://ftp.redhat.com/redhat/convert2rhel/redhat-uep.pem
       - name: Install system dependencies
@@ -39,6 +46,7 @@ jobs:
           for file in /usr/lib/python3/dist-packages/rpm/_rpm*.cpython-*.so; do
             sudo ln -s ${file} $(echo ${file} | sed 's/\.cpython[^.]*//');
           done
+        if: matrix.container == null
       - name: Install dependencies
         run: pip install tox tox-gh-actions
       - name: Run tests
