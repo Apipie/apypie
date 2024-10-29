@@ -6,6 +6,8 @@ Developer Interface
 .. module:: apypie
 .. autoclass:: Api
    :inherited-members:
+.. autoclass:: ForemanApi
+   :inherited-members:
 .. autoclass:: Resource
    :inherited-members:
 .. autoclass:: Action
