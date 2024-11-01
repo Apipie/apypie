@@ -66,7 +66,7 @@ class ForemanApi(Api):
 
     def _resource(self, resource: str) -> 'Resource':
         if resource not in self.resources:
-            raise ForemanApiException(msg="The server doesn't know about {0}, is the right plugin installed?".format(resource))
+            raise ForemanApiException(msg=f"The server doesn't know about {resource}, is the right plugin installed?")
         return self.resource(resource)
 
     def _resource_call(self, resource: str, *args, **kwargs) -> Optional[dict]:
@@ -92,8 +92,7 @@ class ForemanApi(Api):
             if result and is_foreman_task:
                 result = self.wait_for_task(result, ignore_errors=ignore_task_errors)
         except Exception as exc:
-            msg = 'Error while performing {0} on {1}: {2}'.format(
-                action, resource, str(exc))
+            msg = f'Error while performing {action} on {resource}: {exc}'
             raise ForemanApiException.from_exception(exc, msg) from exc
         return result
 
@@ -107,13 +106,13 @@ class ForemanApi(Api):
         while task['state'] not in ['paused', 'stopped']:
             duration -= self.task_poll
             if duration <= 0:
-                raise ForemanApiException(msg="Timeout waiting for Task {0}".format(task['id']))
+                raise ForemanApiException(msg=f"Timeout waiting for Task {task['id']}")
             time.sleep(self.task_poll)
 
             resource_payload = self._resource_prepare_params('foreman_tasks', 'show', {'id': task['id']})
             task = cast(dict, self._resource_call('foreman_tasks', 'show', resource_payload))
         if not ignore_errors and task['result'] != 'success':
-            msg = 'Task {0}({1}) did not succeed. Task information: {2}'.format(task['action'], task['id'], task['humanized']['errors'])
+            msg = f"Task {task['action']}({task['id']}) did not succeed. Task information: {task['humanized']['errors']}"
             raise ForemanApiException(msg=msg)
         return task
 
