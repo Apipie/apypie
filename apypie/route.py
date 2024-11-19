@@ -4,10 +4,7 @@ Apypie Route module
 
 from __future__ import print_function, absolute_import
 
-try:
-    from urllib.parse import quote  # type: ignore
-except ImportError:
-    from urllib import quote  # type: ignore
+from urllib.parse import quote  # type: ignore
 
 from typing import List, Optional  # pylint: disable=unused-import  # noqa: F401
 

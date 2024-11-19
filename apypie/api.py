@@ -12,10 +12,7 @@ try:
 except ImportError:
     JSONDecodeError = ValueError  # type: ignore
 import os
-try:
-    from urlparse import urljoin  # type: ignore
-except ImportError:
-    from urllib.parse import urljoin  # type: ignore
+from urllib.parse import urljoin  # type: ignore
 import requests
 
 from apypie.resource import Resource
