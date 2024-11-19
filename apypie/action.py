@@ -11,11 +11,6 @@ from apypie.example import Example
 from apypie.param import Param
 from apypie.exceptions import MissingArgumentsError, InvalidArgumentTypesError
 
-try:
-    basestring  # type: ignore[used-before-def]  # pylint: disable=used-before-assignment
-except NameError:  # Python 3 has no basestring
-    basestring = str  # pylint: disable=invalid-name,redefined-builtin
-
 if TYPE_CHECKING:
     from apypie.api import Api  # pylint: disable=cyclic-import,unused-import  # noqa: F401
 
@@ -159,7 +154,7 @@ class Action(object):
                             self._validate(param_description.params, item, path=self._add_to_path(path, [param_description.name, str(num)]))
                     elif param_description.expected_type == 'hash':
                         self._validate(param_description.params, value, path=self._add_to_path(path, [param_description.name]))
-                if (param_description.expected_type == 'numeric' and isinstance(value, basestring)):
+                if (param_description.expected_type == 'numeric' and isinstance(value, str)):
                     try:
                         value = int(value)
                     except ValueError:
@@ -171,7 +166,7 @@ class Action(object):
                 if (value is not None
                         and ((param_description.expected_type == 'boolean' and not isinstance(value, bool) and not (isinstance(value, int) and value in [0, 1]))
                              or (param_description.expected_type == 'numeric' and not isinstance(value, int))
-                             or (param_description.expected_type == 'string' and not isinstance(value, (basestring, int))))):
+                             or (param_description.expected_type == 'string' and not isinstance(value, (str, int))))):
                     raise ValueError("{} ({}): {}".format(param, value, param_description.validator))
 
     @staticmethod
