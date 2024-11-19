@@ -7,10 +7,7 @@ from __future__ import print_function, absolute_import
 import errno
 import glob
 import json
-try:
-    from json.decoder import JSONDecodeError  # type: ignore
-except ImportError:
-    JSONDecodeError = ValueError  # type: ignore
+from json.decoder import JSONDecodeError  # type: ignore
 import os
 from urllib.parse import urljoin  # type: ignore
 import requests
