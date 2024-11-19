@@ -21,11 +21,10 @@ import requests
 from apypie.resource import Resource
 from apypie.exceptions import DocLoadingError
 
-try:
-    from typing import Any, Iterable, Optional  # pylint: disable=unused-import
-    from apypie.action import Action  # pylint: disable=unused-import
-except ImportError:
-    pass
+from typing import Any, Iterable, Optional, TYPE_CHECKING  # pylint: disable=unused-import  # noqa: F401
+
+if TYPE_CHECKING:
+    from apypie.action import Action  # pylint: disable=unused-import  # noqa: F401
 
 
 NO_CONTENT = 204

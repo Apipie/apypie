@@ -4,15 +4,12 @@ Apypie Resource module
 
 from __future__ import print_function, absolute_import
 
+from typing import Optional, Any, List, TYPE_CHECKING  # pylint: disable=unused-import  # noqa: F401
+
 from apypie.action import Action
 
-try:
-    from typing import Optional, Any, List, TYPE_CHECKING  # pylint: disable=unused-import
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from apypie.api import Api  # pylint: disable=cyclic-import,unused-import
+    from apypie.api import Api  # pylint: disable=cyclic-import,unused-import  # noqa: F401
 
 
 class Resource(object):

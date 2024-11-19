@@ -5,14 +5,11 @@ opinionated helpers to use Apypie with Foreman
 """
 import time
 
-try:
-    from typing import cast, Optional, Set, Tuple
-except ImportError:
-    pass
+from typing import cast, Optional, Set, Tuple
 
 from apypie.api import Api
 
-from apypie.resource import Resource  # pylint: disable=unused-import
+from apypie.resource import Resource  # pylint: disable=unused-import  # noqa: F401
 
 # Foreman supports "per_page=all" since 2.2 (https://projects.theforeman.org/issues/29909)
 # But plugins, especially Katello, do not: https://github.com/Katello/katello/pull/11126
