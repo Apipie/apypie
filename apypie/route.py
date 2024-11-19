@@ -9,10 +9,7 @@ try:
 except ImportError:
     from urllib import quote  # type: ignore
 
-try:
-    from typing import List, Optional  # pylint: disable=unused-import
-except ImportError:
-    pass
+from typing import List, Optional  # pylint: disable=unused-import  # noqa: F401
 
 
 class Route(object):

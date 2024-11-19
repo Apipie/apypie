@@ -4,6 +4,8 @@ Apypie Action module
 
 from __future__ import print_function, absolute_import
 
+from typing import Optional, Any, Iterable, List, TYPE_CHECKING  # pylint: disable=unused-import  # noqa: F401
+
 from apypie.route import Route
 from apypie.example import Example
 from apypie.param import Param
@@ -14,13 +16,8 @@ try:
 except NameError:  # Python 3 has no basestring
     basestring = str  # pylint: disable=invalid-name,redefined-builtin
 
-try:
-    from typing import Optional, Any, Iterable, List, TYPE_CHECKING  # pylint: disable=unused-import
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from apypie.api import Api  # pylint: disable=cyclic-import,unused-import
+    from apypie.api import Api  # pylint: disable=cyclic-import,unused-import  # noqa: F401
 
 
 class Action(object):

@@ -7,10 +7,7 @@ Inflection rules taken from davidcelis's Inflections (https://github.com/davidce
 
 import re
 
-try:
-    from typing import Iterable, Tuple  # pylint: disable=unused-import
-except ImportError:
-    pass
+from typing import Iterable, Tuple  # pylint: disable=unused-import  # noqa: F401
 
 
 class Inflections(object):
