@@ -51,7 +51,7 @@ jobs:
       - name: Run tests
         run: tox
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v5.0.7
+        uses: codecov/codecov-action@v5.1.1
         with:
           env_vars: PYTHON
         env:
