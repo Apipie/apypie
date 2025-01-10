@@ -38,6 +38,8 @@ class Api(object):
     :param uri: base URL of the server
     :param username: username to access the API
     :param password: password to access the API
+    :param client_cert: client cert to access the API
+    :param client_key: client key to access the API
     :param api_version: version of the API. Defaults to `1`
     :param language: prefered locale for the API description
     :param apidoc_cache_base_dir: base directory for building apidoc_cache_dir. Defaults to `~/.cache/apipie_bindings`.
@@ -79,6 +81,9 @@ class Api(object):
 
         if kwargs.get('username') and kwargs.get('password'):
             self._session.auth = (kwargs['username'], kwargs['password'])
+
+        if kwargs.get('client_cert') and kwargs.get('client_key'):
+            self._session.cert = (kwargs['client_cert'], kwargs['client_key'])
 
         self._apidoc = None
 
