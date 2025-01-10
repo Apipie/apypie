@@ -37,7 +37,7 @@ class Api(object):
 
     :param uri: base URL of the server
     :param username: username to access the API
-    :param password: username to access the API
+    :param password: password to access the API
     :param api_version: version of the API. Defaults to `1`
     :param language: prefered locale for the API description
     :param apidoc_cache_base_dir: base directory for building apidoc_cache_dir. Defaults to `~/.cache/apipie_bindings`.
