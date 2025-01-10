@@ -107,6 +107,19 @@ def test_init_auth(apidoc_cache_dir, username, password, expected):
     assert api._session.auth == expected
 
 
+@pytest.mark.parametrize('client_cert,client_key,expected', [
+    (None, None, None),
+    ('client.crt', None, None),
+    (None, 'client.key', None),
+    ('client.crt', 'client.key', ('client.crt', 'client.key')),
+])
+def test_init_cert(apidoc_cache_dir, client_cert, client_key, expected):
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     client_cert=client_cert, client_key=client_key)
+
+    assert api._session.cert == expected
+
+
 def test_init_language(apidoc_cache_dir):
     api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
                      language='tlh')
