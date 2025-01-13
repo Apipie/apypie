@@ -19,8 +19,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Install wheel
-        run: pip install wheel
+      - name: Install wheel and setuptools
+        run: pip install wheel setuptools
       - name: Build sdist and wheel
         run: python setup.py sdist bdist_wheel
       - name: Publish to PyPI
