@@ -42,7 +42,7 @@ jobs:
         run: sudo mkdir -p /etc/rhsm/ca/ && sudo curl -o /etc/rhsm/ca/redhat-uep.pem https://ftp.redhat.com/redhat/convert2rhel/redhat-uep.pem
       - name: Install system dependencies
         # libyaml-dev for PyYAML, rpm for rpm-py-installer, python3-rpm for rpm-shim
-        run: sudo apt-get install -y libyaml-dev rpm python3-rpm
+        run: sudo apt-get install -y libyaml-dev rpm python3-rpm libkrb5-dev build-essential --no-install-recommends
       - name: Fix up Python RPM binding filenames so that other Pythons find it
         run: |
           for file in /usr/lib/python3/dist-packages/rpm/_rpm*.cpython-*.so; do

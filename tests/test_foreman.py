@@ -36,6 +36,15 @@ def test_init(foremanapi):
     assert foremanapi.apidoc
 
 
+def test_kerberos(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('foreman.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v2.json', json=data)
+    requests_mock.get('https://api.example.com/api/users/extlogin', status_code=204)
+    ForemanApi(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath, kerberos=True)
+    assert requests_mock.last_request.url == 'https://api.example.com/api/users/extlogin'
+
+
 def test_resources(foremanapi):
     assert 'domains' in foremanapi.resources
 
