@@ -12,6 +12,14 @@ import os
 from urllib.parse import urljoin  # type: ignore
 import requests
 
+try:
+    from requests_gssapi import HTTPKerberosAuth  # type: ignore
+except ImportError:
+    try:
+        from requests_kerberos import HTTPKerberosAuth  # type: ignore
+    except ImportError:
+        HTTPKerberosAuth = None
+
 from apypie.resource import Resource
 from apypie.exceptions import DocLoadingError
 
@@ -40,6 +48,7 @@ class Api(object):
     :param password: password to access the API
     :param client_cert: client cert to access the API
     :param client_key: client key to access the API
+    :param kerberos: use Kerberos/GSSAPI for authentication with the API. Requires either `requests-gssapi` or `requests-kerberos`.
     :param api_version: version of the API. Defaults to `1`
     :param language: prefered locale for the API description
     :param apidoc_cache_base_dir: base directory for building apidoc_cache_dir. Defaults to `~/.cache/apipie_bindings`.
@@ -84,6 +93,12 @@ class Api(object):
 
         if kwargs.get('client_cert') and kwargs.get('client_key'):
             self._session.cert = (kwargs['client_cert'], kwargs['client_key'])
+
+        if kwargs.get('kerberos'):
+            if HTTPKerberosAuth is not None:
+                self._session.auth = HTTPKerberosAuth()
+            else:
+                raise ValueError('Kerberos authentication requested, but neither requests-gssapi nor requests-kerberos found.')
 
         self._apidoc = None
 

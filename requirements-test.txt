@@ -8,4 +8,5 @@ pytest-xdist
 pytest-pylint
 pytest-mock
 requests_mock
+requests-gssapi
 setuptools

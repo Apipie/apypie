@@ -39,4 +39,7 @@ setup(
     install_requires=[
         'requests>=2.4.2',
     ],
+    extras_require={
+        'kerberos': ['requests-gssapi'],
+    },
 )

@@ -63,6 +63,8 @@ class ForemanApi(Api):
         self.task_poll = 4
         kwargs['api_version'] = 2
         super().__init__(**kwargs)
+        if kwargs.get('kerberos'):
+            self.call('users', 'extlogin')
 
     def _resource(self, resource: str) -> 'Resource':
         if resource not in self.resources:
