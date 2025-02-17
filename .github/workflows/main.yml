@@ -9,20 +9,23 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     container: ${{ matrix.container }}
     strategy:
       fail-fast: false
       matrix:
         python:
-          - "3.6"
-          - "3.7"
           - "3.8"
           - "3.9"
           - "3.10"
           - "3.11"
           - "3.12"
           - "3.13"
+        include:
+          - python: "3.6"
+            container: "python:3.6"
+          - python: "3.7"
+            container: "python:3.7"
     env:
       PYTHON: ${{ matrix.python }}
     steps:
@@ -45,7 +48,6 @@ jobs:
           for file in /usr/lib/python3/dist-packages/rpm/_rpm*.cpython-*.so; do
             sudo ln -s ${file} $(echo ${file} | sed 's/\.cpython[^.]*//');
           done
-        if: matrix.container == null
       - name: Install dependencies
         run: pip install tox tox-gh-actions
       - name: Run tests
