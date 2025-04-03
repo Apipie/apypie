@@ -40,7 +40,7 @@ def _qs_param(param):
 
 
 def _qs_key(k, v):
-    if type(v) in [list, tuple]:
+    if isinstance(v, (list, tuple)):
         return f"{k}[]"
     return k
 
