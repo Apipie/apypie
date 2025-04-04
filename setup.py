@@ -12,7 +12,7 @@ with open(path.join(path.abspath(path.dirname(__file__)), 'README.md'), encoding
 
 setup(
     name='apypie',
-    version='0.7.0',
+    version='0.7.1',
     description='Apipie bindings for Python',
     license='MIT',
     long_description=LONG_DESCRIPTION,
