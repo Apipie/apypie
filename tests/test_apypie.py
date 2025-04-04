@@ -244,6 +244,8 @@ def test_http_call_get_with_list_params(api, requests_mock):
     requests_mock.get('https://api.example.com/?test[]=all&test[]=the&test[]=list', text='{}')
     api.http_call('get', '/', {'test': ['all', 'the', 'list']})
 
+
+def test_http_call_get_with_tuple_params(api, requests_mock):
     requests_mock.get('https://api.example.com/?test[]=all&test[]=the&test[]=tuple', text='{}')
     api.http_call('get', '/', {'test': ('all', 'the', 'tuple')})
 
