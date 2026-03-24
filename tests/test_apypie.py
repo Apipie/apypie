@@ -120,6 +120,23 @@ def test_init_cert(apidoc_cache_dir, client_cert, client_key, expected):
     assert api._session.cert == expected
 
 
+@pytest.mark.parametrize('oauth1_consumer_key,oauth1_consumer_secret,has_auth', [
+    (None, None, False),
+    ('key', None, False),
+    (None, 'secret', False),
+    ('key', 'secret', True),
+])
+def test_init_oauth1(apidoc_cache_dir, oauth1_consumer_key, oauth1_consumer_secret, has_auth):
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
+                     oauth1_consumer_key=oauth1_consumer_key, oauth1_consumer_secret=oauth1_consumer_secret)
+
+    if has_auth:
+        from requests_oauthlib import OAuth1
+        assert isinstance(api._session.auth, OAuth1)
+    else:
+        assert api._session.auth is None
+
+
 def test_init_language(apidoc_cache_dir):
     api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=apidoc_cache_dir.strpath,
                      language='tlh')
