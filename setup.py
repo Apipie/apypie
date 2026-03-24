@@ -41,5 +41,6 @@ setup(
     ],
     extras_require={
         'kerberos': ['requests-gssapi'],
+        'oauth1': ['requests-oauthlib'],
     },
 )

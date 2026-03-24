@@ -9,4 +9,5 @@ pytest-pylint
 pytest-mock
 requests_mock
 requests-gssapi
+requests-oauthlib
 setuptools
