@@ -7,7 +7,7 @@ import re
 HTML_STRIP = re.compile(r'<\/?[^>]+?>')
 
 
-class Param(object):  # pylint: disable=too-many-instance-attributes,too-few-public-methods
+class Param:  # pylint: disable=too-many-instance-attributes,too-few-public-methods
     """
     Apipie Param
     """

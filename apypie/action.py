@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from apypie.api import Api  # pylint: disable=cyclic-import,unused-import  # noqa: F401
 
 
-class Action(object):
+class Action:
     """
     Apipie Action
     """

@@ -78,7 +78,7 @@ class ForemanApi(Api):
         api_action = self._resource(resource).action(action)
         return api_action.prepare_params(params)
 
-    def resource_action(self, resource: str, action: str, params: dict, options=None, data=None, files=None,  # pylint: disable=too-many-arguments
+    def resource_action(self, resource: str, action: str, params: dict, options=None, data=None, files=None,  # pylint: disable=too-many-arguments,too-many-positional-arguments
                         ignore_task_errors: bool = False) -> Optional[dict]:
         """
         Perform a generic action on a resource

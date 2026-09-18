@@ -8,7 +8,7 @@ import re
 EXAMPLE_PARSER = re.compile(r'(\w+)\s+([^\n]*)\n?(.*)\n(\d+)\n(.*)', re.DOTALL)
 
 
-class Example(object):  # pylint: disable=too-few-public-methods
+class Example:  # pylint: disable=too-few-public-methods
     """
     Apipie Example
     """

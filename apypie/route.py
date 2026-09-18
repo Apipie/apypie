@@ -9,7 +9,7 @@ from urllib.parse import quote  # type: ignore
 from typing import List, Optional  # pylint: disable=unused-import  # noqa: F401
 
 
-class Route(object):
+class Route:
     """
     Apipie Route
     """
