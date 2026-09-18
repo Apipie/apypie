@@ -50,7 +50,7 @@ def _qs_key(k, v):
     return k
 
 
-class Api(object):
+class Api:
     """
     Apipie API bindings
 

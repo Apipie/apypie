@@ -10,7 +10,7 @@ import re
 from typing import Iterable, Tuple  # pylint: disable=unused-import  # noqa: F401
 
 
-class Inflections(object):
+class Inflections:
     """
     Inflections - rules how to convert words from singular to plural and vice versa.
     """
@@ -108,7 +108,7 @@ class Inflections(object):
         self.humans.insert(0, (rule, replacement))
 
 
-class Inflector(object):
+class Inflector:
     """
     Inflector - perform inflections
     """
