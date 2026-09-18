@@ -36,6 +36,9 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
         if: matrix.container == null
+      - name: disable bullseye-security
+        run: sed -i '/bullseye-security/d' /etc/apt/sources.list
+        if: matrix.container == 'python:3.6'
       - name: Install sudo
         run: apt-get update && apt-get install -y sudo
         if: matrix.container != null
