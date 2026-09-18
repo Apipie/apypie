@@ -62,3 +62,12 @@ jobs:
           env_vars: PYTHON
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+      - name: Install dependencies
+        run: pip install tox
+      - name: Run tests
+        run: tox -e pylint
