@@ -181,7 +181,13 @@ class Api:
 
         self._apidoc = None
         for filename in self._cache_dir_contents():
-            os.unlink(filename)
+            try:
+                os.unlink(filename)
+            except PermissionError:
+                pass
+            except OSError as err:
+                if err.errno != errno.EROFS:
+                    raise
 
     @property
     def resources(self):
@@ -225,11 +231,6 @@ class Api:
 
     def _retrieve_apidoc(self):
         # type: () -> dict
-        try:
-            os.makedirs(self.apidoc_cache_dir)
-        except OSError as err:
-            if err.errno != errno.EEXIST or not os.path.isdir(self.apidoc_cache_dir):
-                raise
         response = None
         if self.language:
             response = self._retrieve_apidoc_call('/apidoc/v{0}.{1}.json'.format(self.api_version, self.language), safe=True)
@@ -244,9 +245,20 @@ class Api:
                   - is your server down?""".format(self.uri, exc))
         if not response:
             raise DocLoadingError("""Could not load data from {0}""".format(self.uri))
-        with open(self.apidoc_cache_file, 'w') as apidoc_file:  # pylint:disable=all
-            apidoc_file.write(json.dumps(response))
+        self._cache_apidoc(response)
         return response
+
+    def _cache_apidoc(self, response):
+        # type: (dict) -> None
+        try:
+            os.makedirs(self.apidoc_cache_dir, exist_ok=True)
+            with open(self.apidoc_cache_file, 'w') as apidoc_file:  # pylint:disable=all
+                apidoc_file.write(json.dumps(response))
+        except PermissionError:
+            pass
+        except OSError as err:
+            if err.errno != errno.EROFS:
+                raise
 
     def _retrieve_apidoc_call(self, path, safe=False):
         # type: (str, bool) -> Optional[dict]

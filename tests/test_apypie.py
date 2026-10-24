@@ -1,9 +1,10 @@
 # pylint: disable=invalid-name,missing-docstring,protected-access
-import pytest
+import errno
+import json
 
 import apypie
+import pytest
 import requests
-import json
 
 
 def test_init(api):
@@ -11,12 +12,81 @@ def test_init(api):
     assert api.apidoc
 
 
-def test_init_bad_cachedir(tmpdir):
+def test_init_bad_cachedir(fixture_dir, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
+
     bad_cachedir = tmpdir.join('bad')
     bad_cachedir.ensure(file=True)
     api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=bad_cachedir.strpath)
     with pytest.raises(OSError):
         api.apidoc
+
+
+def test_init_read_only_cachedir(fixture_dir, monkeypatch, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
+
+    def deny_cache_creation(_path, exist_ok=False):
+        raise PermissionError(errno.EACCES, 'Permission denied')
+
+    monkeypatch.setattr('apypie.api.os.makedirs', deny_cache_creation)
+
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.join('read-only').strpath)
+
+    assert api.apidoc == data
+
+
+def test_init_read_only_cache_file(fixture_dir, monkeypatch, requests_mock, tmpdir):
+    with fixture_dir.join('dummy.json').open() as read_file:
+        data = json.load(read_file)
+    requests_mock.get('https://api.example.com/apidoc/v1.json', json=data)
+
+    api = apypie.Api(uri='https://api.example.com', apidoc_cache_dir=tmpdir.strpath)
+    original_open = open
+
+    def deny_cache_write(filename, mode='r', *args, **kwargs):
+        if filename == api.apidoc_cache_file and mode == 'w':
+            raise OSError(errno.EROFS, 'Read-only file system')
+        return original_open(filename, mode, *args, **kwargs)
+
+    monkeypatch.setattr('builtins.open', deny_cache_write)
+
+    assert api.apidoc == data
+
+
+def test_clean_read_only_cache(api, monkeypatch):
+    def deny_cache_removal(_path):
+        raise OSError(errno.EROFS, 'Read-only file system')
+
+    monkeypatch.setattr('apypie.api.os.unlink', deny_cache_removal)
+
+    api.clean_cache()
+
+    assert api._apidoc is None
+
+
+def test_clean_permission_denied_cache(api, monkeypatch):
+    def deny_cache_removal(_path):
+        raise PermissionError(errno.EACCES, 'Permission denied')
+
+    monkeypatch.setattr('apypie.api.os.unlink', deny_cache_removal)
+
+    api.clean_cache()
+
+    assert api._apidoc is None
+
+
+def test_clean_cache_propagates_unexpected_error(api, monkeypatch):
+    def fail_cache_removal(_path):
+        raise OSError(errno.EIO, 'I/O error')
+
+    monkeypatch.setattr('apypie.api.os.unlink', fail_cache_removal)
+
+    with pytest.raises(OSError, match='I/O error'):
+        api.clean_cache()
 
 
 def test_init_bad_response(requests_mock, tmpdir):
